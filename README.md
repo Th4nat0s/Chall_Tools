@@ -7,8 +7,8 @@ Userfull tools for Security Challenges
 aslr : Switch on/off aslr (for lazy guys)
 
 <b>C</b><br>
-cprint : Column print a file
+cprint : Column print a file (only ascii printable)
 
 <b>X</b><br>
-xlentro.py : Xor Lenght Entropy - Analyse Shannon Entropy on file, Usefull for determining XOR crypted file key lenght.
+xlentro.py : Xor Lenght Entropy - Show Shannon Entropy on a file, Usefull for determining XOR crypted file key lenght.
 
