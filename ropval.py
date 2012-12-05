@@ -12,12 +12,13 @@ from subprocess import call
 import os
 import re
 
-if len(sys.argv) != 2:
-    print 'To Use: '+ sys.argv[0]+' elffilename'
-		print 'Will find all static numeric values'
-		print 'very usefull for a rop mov eax,[ebx]'
+if len(sys.argv) < 2:
+	print 'To Use: '+ sys.argv[0]+' elffilename (offset)'
+	print 'Will find all static numeric values'
+	print 'very usefull for a rop add eax,[ebx-xxxxxx]'
+	print ' ex : ropval.py mybinary 0xb8a0008 | sort -n'
 
-    sys.exit()
+	sys.exit()
 file = open(sys.argv[1], 'rb')
 filename = sys.argv[1]
 byteArr = bytearray(file.read())
@@ -28,6 +29,12 @@ filesize = len(byteArr)
 sys.stdout.flush()
 #print "- Elfread "
 sys.stdout.flush()
+
+if len(sys.argv) == 3:
+	offset=int(sys.argv[2],16)
+else:
+	offset=0
+
 
 
 elf=[]
@@ -58,9 +65,16 @@ for section in elf:
 			result.append ( [int(potential), section[2]+j ])	
 		j = j+1
 
-print "Decval","Hexval","Offset"
+print "Decval","Hexval","mOffset",
+if offset<>0:
+	print "sOffest"
+else:
+	print ""
+
 for items in result:
 	print str(items[0]),
 	print '%08X' % items[0] ,
-	print '%08X' % int(items[1])
-
+	print '%08X' % int(items[1]),
+	if offset<>0:
+		print '%08X' % int(int(items[1]+offset) % 0xffffffff),
+	print ""
