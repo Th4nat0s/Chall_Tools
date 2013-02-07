@@ -1,7 +1,7 @@
 #!/usr/bin/python
 import sys
 
-# v 0.1
+# v 0.2
 
 # Copyleft Thanat0s
 # http://Thanat0s.trollprod.org
@@ -25,7 +25,6 @@ PenDown = False
 Comment = False
 CommentType = ''
 for byte in range( 0, fileSize ):
-
 	# Ignore <? et ?> dans les strings
 	if ((byteArr[byte] == ord("'")) and (CommentType == '' or CommentType == ord("'"))): 
 		Comment = not Comment # Toggle True to False
@@ -43,13 +42,14 @@ for byte in range( 0, fileSize ):
 			CommentType = ''
 
 	# Prend entre  <? et ?> 
-	if Comment == False :
+	if Comment == False:
 		if (byteArr[byte] == ord("<")) and (byteArr[byte+1] == ord("?")) :
 			PenDown = True
 		if (byteArr[byte] == ord("?")) and (byteArr[byte+1] == ord(">")) :
 			PenDown = False
-		
-	if PenDown == True :
-		Result = Result + chr(byteArr[byte])
+			Result = Result + chr(byteArr[byte]) + chr(byteArr[byte+1])
 
+	if PenDown == True: 
+		Result = Result + chr(byteArr[byte])
+	
 print Result
