@@ -37,7 +37,7 @@ for byte in range( 0, fileSize ):
 	if ((byteArr[byte] == ord('"')) and (CommentType == '' or CommentType == ord('"'))): 
 		Comment = not Comment # Toggle True to False
 		if Comment == True:   
-			CommentType = "'"
+			CommentType = '"'
 		else:
 			CommentType = ''
 

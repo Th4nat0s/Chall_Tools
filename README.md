@@ -9,6 +9,9 @@ aslr : Switch on/off aslr (for lazy guys)
 <b>C</b><br>
 cprint : Column print a file (only ascii printable)
 
+<b>P</b><br>
+phpeval.py: Deobfuscate php code like eval(gzinflate(base64(backdoorcode)))
+
 <b>R</b><br>
 ropval.py : Find values in ELF, usefull for rop like ADD EAX,[EBX]
 
