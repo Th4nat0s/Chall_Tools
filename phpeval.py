@@ -165,11 +165,12 @@ for char in Result:
 	tmpbuffer = tmpbuffer + char
 
 
+phpoutput = "<?php" + CRLF
 phpoutput = phpoutput + "// Decoded by phpeval.py" + CRLF
 phpoutput = phpoutput + "// DECODING ROUND " + str(ROUND) + CRLF
 PHP_Variable={}
 for strline in line:
 	evaluate(strline)
 phpoutput = phpoutput + "// END OF DECODING ROUND " + str(ROUND) + CRLF
-
+phpoutput = phpoutput + "?>" + CRLF
 print phpoutput
