@@ -74,11 +74,11 @@ def evaluate(strline):
 			func_payload = re.sub('(\"|\')$', '', func_payload)
 			func_payload = re.sub('^(\"|\')', '', func_payload)
 		else:
-			func_payload = code  
+			func_payload= code  
 			func_payload = re.sub('^[\"\']',  '', func_payload)
 			func_payload = re.sub('[\"\']$',  '', func_payload)# 
-		func_payload = base64.b64decode(func_payload)
-		print "Done"
+			func_payload = base64.b64decode(func_payload)
+			print "Done"
 
 	else:
 		print "Unknown sentence : " + strline
@@ -124,22 +124,36 @@ while ( byte <= fileSize-1) :
 		if (byteArr[byte] == ord("<")) and (byteArr[byte+1] == ord("?")) and (byteArr[byte+2] == ord("p")) and (byteArr[byte+3] == ord("h")) and (byteArr[byte+4] == ord("p"))  :
 			PenDown = True
 			byte = byte + 5
+			if  (byte >= fileSize-1):
+				break
 	
 		if (byteArr[byte] == ord("<")) and (byteArr[byte+1] == ord("?")) :
 			PenDown = True
 			byte = byte + 2
+			if  (byte >= fileSize-1):
+				break
+
 
 		if (byteArr[byte] == ord("?")) and (byteArr[byte+1] == ord(">")) :
 			PenDown = False
 			byte = byte + 2
+			if  (byte >= fileSize-1):
+			        break
+							
 
 		# CRLF on ; 
 		if (byteArr[byte] == ord(";")) :
 			Result = Result + chr(0x0a) 
 			byte = byte + 1
+			if  (byte >= fileSize-1):
+			       break
+							
 
 		if (byteArr[byte] == 0x0d ) :
 			byte = byte + 1
+	 		if  (byte >= fileSize-1):
+				break
+					
 
 	if PenDown == True:
 		Result = Result + chr(byteArr[byte])
@@ -163,6 +177,7 @@ for char in Result:
 			line.append ( tmpbuffer)
 		tmpbuffer = ''
 	tmpbuffer = tmpbuffer + char
+
 
 
 phpoutput = "<?php" + CRLF
