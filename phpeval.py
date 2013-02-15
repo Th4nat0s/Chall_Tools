@@ -3,6 +3,7 @@ import sys
 import re
 import base64
 import zlib
+import codecs
 
 # v 0.1 Beta de Beta de chez Beta
 
@@ -21,6 +22,11 @@ func_payload = ''
 phpoutput = '' 
 CRLF  = chr(0x0a)
 ROUND = 0
+
+def decoted(str_decote):
+	str_decote = re.sub('(\"|\')$', '', str_decote)
+	str_decote = re.sub('^(\"|\')', '', str_decote)
+	return str_decote
 
 def evaluate(strline):
 	global phpoutput
@@ -46,6 +52,7 @@ def evaluate(strline):
 		ROUND = ROUND + 1
 		phpoutput = phpoutput + "// DECODING ROUND " + str(ROUND) + CRLF
 		phpoutput = phpoutput + func_payload + ";" + CRLF
+		func_payload ="" 
 
 	elif re.match("^gzinflate(\s)*\((?P<CODE>.*)\)", strline):
 		code_regex = re.match(r"^gzinflate(\s)*\((?P<CODE>.*)\)", strline)
@@ -57,8 +64,8 @@ def evaluate(strline):
 		# No more nested function
 		if re.match('^\$', code):  # gzinflate variable
 			func_payload = PHP_Variable[code] # from previous set variable
-		#else:
-			#//	func_payload = code  #
+		elif re.match('^(\'|\")',code ): # else load from direct code
+			func_payload = code
 		func_payload = zlib.decompressobj().decompress('x\x9c' + func_payload)
 
 	elif re.match("^base64_decode(\s)*\((?P<CODE>.*)\)", strline):
@@ -70,19 +77,48 @@ def evaluate(strline):
 			evaluate(code)
 		# No more nested function
 		if re.match('^\$', code):  # gzinflate variable
-			func_payload = PHP_Variable[code] # from previous set variable
-			func_payload = re.sub('(\"|\')$', '', func_payload)
-			func_payload = re.sub('^(\"|\')', '', func_payload)
-		else:
-			func_payload= code  
-			func_payload = re.sub('^[\"\']',  '', func_payload)
-			func_payload = re.sub('[\"\']$',  '', func_payload)# 
-			func_payload = base64.b64decode(func_payload)
-			print "Done"
+			func_payload =PHP_Variable[code] # from previous set variable
+		elif re.match('^(\'|\")',code ): # else load from direct code
+			func_payload = code
+		func_payload = base64.b64decode(decoted(func_payload))
+		print "Done"
 
+	elif re.match("^str_rot13(\s)*\((?P<CODE>.*)\)", strline):
+		code_regex = re.match(r"^str_rot13(\s)*\((?P<CODE>.*)\)", strline)
+		code = code_regex.group('CODE')
+		print "Function str_rot13 " ,
+		# Test for nested function
+		if not re.match('^(\'|\"|\$)',code ):
+			print ", Sub",
+			evaluate(code)
+		# No nested function load value, 
+		if re.match('^\$', code):  # if value is a variable
+			func_payload = decoted( PHP_Variable[code]) # from previous set variable
+		elif re.match('^(\'|\")',code ): # else load from direct code
+			func_payload = code
+		# if not a variable or quoted, it's from a previous function
+		func_payload =  codecs.encode( decoted(func_payload), "rot13" )
+
+	elif re.match("^strrev(\s)*\((?P<CODE>.*)\)", strline):
+		code_regex = re.match(r"^strrev(\s)*\((?P<CODE>.*)\)", strline)
+		code = code_regex.group('CODE')
+		print "Function strrev"  ,
+		if not re.match('^(\'|\"|\$)',code ):
+			print ", Sub",
+			evaluate(code)
+  	# No more nested function
+		if re.match('^\$', code):  # gzinflate variabl
+			func_payload = PHP_Variable[code] # from previous set variable
+		elif re.match('^(\'|\")',code ):
+			func_payload = code
+		func_payload =  decoted(func_payload[::-1])
+	
 	else:
 		print "Unknown sentence : " + strline
-		phpoutput = phpoutput + strline + ";"+ CRLF
+		if re.match('\{$',strline ):
+			phpoutput = phpoutput + strline + CRLF
+		else:	
+			phpoutput = phpoutput + strline + ";"+ CRLF
 
 
 if len(sys.argv) != 2:
@@ -139,22 +175,28 @@ while ( byte <= fileSize-1) :
 			byte = byte + 2
 			if  (byte >= fileSize-1):
 			        break
-							
+										
 
 		# CRLF on ; 
 		if (byteArr[byte] == ord(";")) :
 			Result = Result + chr(0x0a) 
 			byte = byte + 1
 			if  (byte >= fileSize-1):
-			       break
-							
+				break
+	
+		# if blabla {  }
+		if (byteArr[byte] == ord("{")) :
+			Result = Result +  "{" + chr(0x0a)
+			byte = byte + 1
+			if  (byte >= fileSize-1):
+				break
+
 
 		if (byteArr[byte] == 0x0d ) :
 			byte = byte + 1
 	 		if  (byte >= fileSize-1):
 				break
 					
-
 	if PenDown == True:
 		Result = Result + chr(byteArr[byte])
 	byte = byte + 1
@@ -177,7 +219,6 @@ for char in Result:
 			line.append ( tmpbuffer)
 		tmpbuffer = ''
 	tmpbuffer = tmpbuffer + char
-
 
 
 phpoutput = "<?php" + CRLF
