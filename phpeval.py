@@ -24,6 +24,7 @@ func_payload = ''
 phpoutput = '' 
 CRLF  = chr(0x0a)
 EVALCOUNT = 0
+line = ''
 
 # print debug messages
 def debug(str_debug,crlf_debug = False):
@@ -140,11 +141,101 @@ def evaluate(strline):
 		else:	
 			phpoutput = phpoutput + ";"+ CRLF
 
+def preparse (byteArr):
+	byte = 0
+	Comment = False
+	PenDown = False
+	Result = ''
+	CommentType = '' 
+	global line
+	# Preproccessing .. clean UP ; 
+
+	while ( byte <= fileSize-1) :
+		# Ignore dans les strings
+		if ((byteArr[byte] == ord("'")) and (CommentType != '"')):
+			Comment = not Comment # Toggle True to False
+			if Comment == True:
+				CommentType = "'"
+			else:
+				CommentType = ''
+
+		# Ignore dans les strings
+		if ((byteArr[byte] == ord('"')) and (CommentType != "'" )):
+			Comment = not Comment # Toggle True to False
+			if Comment == True:   
+				CommentType = '"'
+			else:
+				CommentType = ''
+
+		# Prend le code entre  <? et ?> 
+		if Comment == False:
+			if (byteArr[byte] == ord("<")) and (byteArr[byte+1] == ord("?")) and (byteArr[byte+2] == ord("p")) and (byteArr[byte+3] == ord("h")) and (byteArr[byte+4] == ord("p"))  :
+				PenDown = True
+				byte = byte + 5
+				if  (byte >= fileSize-1):
+					break
+		
+			if (byteArr[byte] == ord("<")) and (byteArr[byte+1] == ord("?")) :
+				PenDown = True
+				byte = byte + 2
+			if  (byte >= fileSize-1):
+				break
+
+
+			if (byteArr[byte] == ord("?")) and (byteArr[byte+1] == ord(">")) :
+				PenDown = False
+				byte = byte + 2
+				if  (byte >= fileSize-1):
+				        break
+										
+			# CRLF on ; 
+			if (byteArr[byte] == ord(";")) :
+				Result = Result + chr(0x0a) 
+				byte = byte + 1
+				if  (byte >= fileSize-1):
+					break
+	
+			# if blabla {  }
+			if (byteArr[byte] == ord("{")) :
+				Result = Result +  "{" + chr(0x0a)
+				byte = byte + 1
+				if  (byte >= fileSize-1):
+					break
+	
+			# convert CRLF to LF
+			if (byteArr[byte] == 0x0d ) :
+				byte = byte + 1
+		 		if  (byte >= fileSize-1):
+					break
+					
+		if PenDown == True:
+			Result = Result + chr(byteArr[byte])
+		byte = byte + 1
+
+
+	line = []
+	byte = 0
+	tmpbuffer = '' 
+	# Convert Array to strings
+	for char in Result:
+		if char == chr(0x0A) :
+		  # Chomp line	
+			tmpbuffer = tmpbuffer.rstrip('\n')
+			# Bug is present Here it should avoid "x  x" or 'x  x'	
+			tmpbuffer = re.sub('\s+',	 ' ', tmpbuffer)
+			tmpbuffer = re.sub('^\s',	 '', tmpbuffer)
+			if tmpbuffer != "":
+				line.append ( tmpbuffer)
+			tmpbuffer = ''
+		tmpbuffer = tmpbuffer + char
+
+
+# ------ Main Code --------
+
 if len(sys.argv) != 2:
 	print 'Deobfuscate PHP Code from a file'
 	print 'To Use: ' + sys.argv[0] + ' infile'
 	sys.exit()
-
 
 # open File
 file = open(sys.argv[1], 'rb')
@@ -153,102 +244,15 @@ file.close()
 fileSize = len(byteArr)
 
 # How many eval found
-EVALFOUND = len(re.findall(r"eval(\s)*\(",byteArr ) ) 
-
+EVALFOUND = len(re.findall(r"eval(\s)*\(",byteArr ) )
 if EVALFOUND == 0 :
 	debug ("No Eval() found, quitting " )
-	sys.exit()
+	asys.exit()
 else:
-	debug ("Eval() found: " + str(EVALFOUND))
+  debug ("Eval() found: " + str(EVALFOUND))
 
-
-Result = ''
-PenDown = False
-Comment = False
-CommentType = ''
-byte =  0
-
-# Preproccessing .. clean UP ; 
-while ( byte <= fileSize-1) :
-	# Ignore dans les strings
-	if ((byteArr[byte] == ord("'")) and (CommentType != '"')):
-		Comment = not Comment # Toggle True to False
-		if Comment == True:
-			CommentType = "'"
-		else:
-			CommentType = ''
-
-	# Ignore dans les strings
-	if ((byteArr[byte] == ord('"')) and (CommentType != "'" )):
-		Comment = not Comment # Toggle True to False
-		if Comment == True:   
-			CommentType = '"'
-		else:
-			CommentType = ''
-
-	# Prend le code entre  <? et ?> 
-	if Comment == False:
-		if (byteArr[byte] == ord("<")) and (byteArr[byte+1] == ord("?")) and (byteArr[byte+2] == ord("p")) and (byteArr[byte+3] == ord("h")) and (byteArr[byte+4] == ord("p"))  :
-			PenDown = True
-			byte = byte + 5
-			if  (byte >= fileSize-1):
-				break
-	
-		if (byteArr[byte] == ord("<")) and (byteArr[byte+1] == ord("?")) :
-			PenDown = True
-			byte = byte + 2
-			if  (byte >= fileSize-1):
-				break
-
-
-		if (byteArr[byte] == ord("?")) and (byteArr[byte+1] == ord(">")) :
-			PenDown = False
-			byte = byte + 2
-			if  (byte >= fileSize-1):
-			        break
-										
-		# CRLF on ; 
-		if (byteArr[byte] == ord(";")) :
-			Result = Result + chr(0x0a) 
-			byte = byte + 1
-			if  (byte >= fileSize-1):
-				break
-	
-		# if blabla {  }
-		if (byteArr[byte] == ord("{")) :
-			Result = Result +  "{" + chr(0x0a)
-			byte = byte + 1
-			if  (byte >= fileSize-1):
-				break
-
-		# convert CRLF to LF
-		if (byteArr[byte] == 0x0d ) :
-			byte = byte + 1
-	 		if  (byte >= fileSize-1):
-				break
-					
-	if PenDown == True:
-		Result = Result + chr(byteArr[byte])
-	byte = byte + 1
-
-
-line = []
-byte = 0
-tmpbuffer = '' 
-# Convert Array to strings
-for char in Result:
-	if char == chr(0x0A) :
-	  # Chomp line	
-		tmpbuffer = tmpbuffer.rstrip('\n')
-		# Bug is present Here it should avoid "x  x" or 'x  x'	
-		tmpbuffer = re.sub('\s+',	 ' ', tmpbuffer)
-		tmpbuffer = re.sub('^\s',	 '', tmpbuffer)
-		if tmpbuffer != "":
-			line.append ( tmpbuffer)
-		tmpbuffer = ''
-	tmpbuffer = tmpbuffer + char
-
-
+# Php pre- parsing
+preparse(byteArr)
 PASSCOUNT = 0
 phpoutput = "<?php" + CRLF
 phpoutput = phpoutput + "// Decoded by phpeval.py" + CRLF
