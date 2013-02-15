@@ -3,7 +3,6 @@ import sys
 import re
 import base64
 import zlib
-import codecs
 
 # v 0.2 Beta de Beta de chez Beta
 
@@ -33,11 +32,38 @@ def debug(str_debug,crlf_debug = False):
 	else:
 		print str_debug
 
+# trim start and end of string
+def trim(str_trim):
+	str_trim = re.sub('^(\s)*', '', str_trim)
+	str_trim = re.sub('(\s)*$', '', str_trim)
+	return str_trim
+
 # remove quotes around a string ' and "
 def decoted(str_decote):
-	str_decote = re.sub('(\"|\')$', '', str_decote)
-	str_decote = re.sub('^(\"|\')', '', str_decote)
+	str_decote = re.sub('(\"|\')(\s)*$', '', str_decote)
+	str_decote = re.sub('^(\s)*(\"|\')', '', str_decote)
 	return str_decote
+
+
+# Rot13 with "binary" field support
+def rot13(str_rot13):
+#	print "XXXX" + str_rot13 + "XXXX"
+	result_rot13 = ''
+	for chars in str_rot13:
+		delta_rot = 0
+		# Determine if rot is required 
+		if (ord(chars) >= 65) and (ord(chars) <= 90 ):
+			delta_rot = 65
+		if (ord(chars) >= 97) and (ord(chars) <= 122 ):
+			delta_rot = 97
+		# rot if needed
+		if (delta_rot == 0):
+			result_rot13 = result_rot13 + chars
+		else:
+			result_rot13 =	result_rot13 + chr(((((ord(chars) - delta_rot) + 13 ) % 26 ) + delta_rot))
+	
+#	print "XXXX" + result_rot13 + "XXXX"
+	return (result_rot13)
 
 # Evaluate php functions
 def evaluate(strline):
@@ -46,11 +72,13 @@ def evaluate(strline):
 	global func_payload
 	global EVALCOUNT
 	
+
+
 	# Variable settings
 	if re.match('^\$' ,strline):
 		variable = re.split('=', strline, 1)
-		debug("Set variable : " + variable[0]) 
-		PHP_Variable[variable[0]]= variable[1]
+		debug("Set variable : >" + trim(variable[0]) + "<" )
+		PHP_Variable[trim(variable[0])]= trim(variable[1])
 	 	phpoutput = phpoutput + strline + "; " + CRLF
 
 	# Eval()	
@@ -115,7 +143,8 @@ def evaluate(strline):
 		elif re.match('^(\'|\")',code ): # else load from direct code
 			func_payload = code
 		# if not a variable or quoted, it's from a previous function
-		func_payload =  codecs.encode( decoted(func_payload), "rot13" )
+		func_payload =  rot13(decoted(func_payload))
+	#	codecs.encode( decoted(func_payload), "rot13" )
 
 	# strrev	
 	elif re.match("^strrev(\s)*\((?P<CODE>.*)\)", strline):
@@ -180,7 +209,6 @@ def preparse (byteArr):
 				byte = byte + 2
 			if  (byte >= fileSize-1):
 				break
-
 
 			if (byteArr[byte] == ord("?")) and (byteArr[byte+1] == ord(">")) :
 				PenDown = False
