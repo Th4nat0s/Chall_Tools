@@ -38,8 +38,6 @@ def decoted(str_decote):
 	str_decote = re.sub('^(\"|\')', '', str_decote)
 	return str_decote
 
-
-
 # Evaluate php functions
 def evaluate(strline):
 	global phpoutput
@@ -67,6 +65,7 @@ def evaluate(strline):
 		EVALCOUNT = EVALCOUNT + 1
 		phpoutput = phpoutput + "// DECODING EVALCOUNT " + str(EVALCOUNT) + CRLF
 		phpoutput = phpoutput + func_payload + ";" + CRLF
+		phpoutput = phpoutput + "// END OF DECODING EVALCOUNT " + str(EVALCOUNT) + CRLF
 		func_payload ="" 
 
 	# gzinflate()
@@ -208,7 +207,6 @@ while ( byte <= fileSize-1) :
 			if  (byte >= fileSize-1):
 			        break
 										
-
 		# CRLF on ; 
 		if (byteArr[byte] == ord(";")) :
 			Result = Result + chr(0x0a) 
@@ -223,6 +221,7 @@ while ( byte <= fileSize-1) :
 			if  (byte >= fileSize-1):
 				break
 
+		# convert CRLF to LF
 		if (byteArr[byte] == 0x0d ) :
 			byte = byte + 1
 	 		if  (byte >= fileSize-1):
@@ -241,6 +240,7 @@ for char in Result:
 	if char == chr(0x0A) :
 	  # Chomp line	
 		tmpbuffer = tmpbuffer.rstrip('\n')
+		# Bug is present Here it should avoid "x  x" or 'x  x'	
 		tmpbuffer = re.sub('\s+',	 ' ', tmpbuffer)
 		tmpbuffer = re.sub('^\s',	 '', tmpbuffer)
 		if tmpbuffer != "":
@@ -249,13 +249,14 @@ for char in Result:
 	tmpbuffer = tmpbuffer + char
 
 
+PASSCOUNT = 0
 phpoutput = "<?php" + CRLF
 phpoutput = phpoutput + "// Decoded by phpeval.py" + CRLF
-# phpoutput = phpoutput + "// DECODING EVALCOUNT " + str(EVALCOUNT) + CRLF
+phpoutput = phpoutput + "// DECODING PASS " + str(PASSCOUNT) + CRLF
 PHP_Variable={}
 for strline in line:
 	evaluate(strline)
-phpoutput = phpoutput + "// END OF DECODING EVALCOUNT " + str(EVALCOUNT) + CRLF
+phpoutput = phpoutput + "// END OF DECODING PASS " + str(PASSCOUNT) + CRLF
 phpoutput = phpoutput + "?>" + CRLF
 
 # output 
