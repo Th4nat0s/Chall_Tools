@@ -44,6 +44,10 @@ def decoted(str_decote):
 	str_decote = re.sub('^(\s)*(\"|\')', '', str_decote)
 	return str_decote
 
+# get variable from hash
+def get_phpvar(str_variable):
+	str_variable = trim(str_variable);
+	return decoted(PHP_Variable[str_variable]) # from previous set variable
 
 # Rot13 with "binary" field support
 def rot13(str_rot13):
@@ -107,7 +111,7 @@ def evaluate(strline):
 			evaluate(code)
 		# No more nested function
 		if re.match('^\$', code):  # gzinflate variable
-			func_payload = PHP_Variable[code] # from previous set variable
+			func_payload = get_phpvar(code) # from previous set variable
 		elif re.match('^(\'|\")',code ): # else load from direct code
 			func_payload = code
 		func_payload = zlib.decompressobj().decompress('x\x9c' + func_payload)
@@ -122,7 +126,7 @@ def evaluate(strline):
 			evaluate(code)
 		# No more nested function
 		if re.match('^\$', code): 
-			func_payload =PHP_Variable[code] # from previous set variable
+			func_payload = get_phpvar(code) # from previous set variable
 		elif re.match('^(\'|\")',code ): # else load from direct code
 			func_payload = code
 		func_payload = base64.b64decode(decoted(func_payload))
@@ -139,7 +143,7 @@ def evaluate(strline):
 			evaluate(code)
 		# No nested function load value, 
 		if re.match('^\$', code):  # if value is a variable
-			func_payload = decoted( PHP_Variable[code]) # from previous set variable
+			func_payload = get_phpvar(code) # from previous set variable
 		elif re.match('^(\'|\")',code ): # else load from direct code
 			func_payload = code
 		# if not a variable or quoted, it's from a previous function
@@ -156,7 +160,7 @@ def evaluate(strline):
 			evaluate(code)
   	# No more nested function
 		if re.match('^\$', code):  # gzinflate variabl
-			func_payload = PHP_Variable[code] # from previous set variable
+			func_payload = get_phpvar(code) # from previous set variable
 		elif re.match('^(\'|\")',code ):
 			func_payload = code
 		func_payload =  decoted(func_payload[::-1])
