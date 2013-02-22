@@ -75,7 +75,7 @@ def evaluate(strline):
 
 
 	# Variable settings
-	if re.match('^\$' ,strline):
+	if re.match('^\$.*=' ,strline):
 		variable = re.split('=', strline, 1)
 		debug("Set variable : >" + trim(variable[0]) + "<" )
 		PHP_Variable[trim(variable[0])]= trim(variable[1])
@@ -216,8 +216,9 @@ def preparse (byteArr):
 				if  (byte >= fileSize-1):
 				        break
 										
+		
 			# CRLF on ; 
-			if (byteArr[byte] == ord(";")) :
+			if (byteArr[byte] == ord(";")):
 				Result = Result + chr(0x0a) 
 				byte = byte + 1
 				if  (byte >= fileSize-1):
