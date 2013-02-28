@@ -10,6 +10,7 @@ aslr : Switch on/off aslr (for lazy guys)
 cprint : Column print a file (only ascii printable)
 
 <b>P</b><br>
+peentro.py: find anomalies by name or entropy in sections of a PE file.<br>
 phpeval.py: Deobfuscate php code like eval(gzinflate(base64(backdoorcode)))
 
 <b>R</b><br>
