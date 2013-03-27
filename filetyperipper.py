@@ -25,4 +25,5 @@ while I <= FILESIZE:
   STATUS, FILERESULT = commands.getstatusoutput ("file -b temp.dat" )
   if not FILERESULT == 'data':
     print ('%.8X %s') % (I ,FILERESULT )
+    sys.stdout.flush()
   I += 1
