@@ -12,6 +12,9 @@ cprint : Column print a file (only ascii printable)
 <b>D</b><br>
 dcod_zeustr.py: Decode strings in Zeus <br>
 
+<b>F</b><br>
+filetyperipper.py: Detect all filetype contained in a binary
+
 <b>P</b><br>
 peentro.py: find anomalies by name or entropy in sections of a PE file.<br>
 phpeval.py: Deobfuscate php code like eval(gzinflate(base64(backdoorcode)))
