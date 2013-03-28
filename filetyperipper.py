@@ -19,11 +19,18 @@ FILESIZE = len(FILEARRAY)
 print "loaded %s" % ( FILESIZE ) 
 
 
-I = 0
-while I <= FILESIZE:
-  open('temp.dat','wb').write(FILEARRAY[I:FILESIZE])
+# Min 64 Bytes
+I = FILESIZE - 64
+BOUND = FILESIZE
+
+while I > 64:
+  open('temp.dat','wb').write(FILEARRAY[I:BOUND])
   STATUS, FILERESULT = commands.getstatusoutput ("file -b temp.dat" )
   if not FILERESULT == 'data':
     print ('%.8X %s') % (I ,FILERESULT )
     sys.stdout.flush()
-  I += 1
+    # If Found a file, set a new Bound (But always at least 16k)
+    BOUND = I + 16000
+    if BOUND > FILESIZE:
+      BOUND = FILESIZE
+  I -= 1
