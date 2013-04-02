@@ -6,6 +6,9 @@ Userfull tools for Security Challenges
 <b>A</b><br>
 aslr : Switch on/off aslr (for lazy guys)
 
+<b>B</b><br>
+binpatch.py : Patch a file, allow regex matches.
+
 <b>C</b><br>
 cprint : Column print a file (only ascii printable)
 
