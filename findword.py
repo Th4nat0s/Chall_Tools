@@ -7,10 +7,6 @@
 #
 # Licence GNU GPL
 
-
-# Big Hug to bmiseplon sur #python-fr
-#This Code is clean :)
-
 import re
 import sys
 import string
@@ -21,15 +17,13 @@ def removeAccentedChars(s):
   return unicodedata.normalize('NFKD',u).encode('ascii','ignore')
       
 
-letters = "mechant"
-length = 7 
-
-pattern = "^["+ letters + "]{" + str(length) + "}$"
-
 if __name__ == '__main__':
+  candidates = []
 
   letters, length = sys.argv[1:]
   length = int(length)
+
+  column = (80 - length) / length
 
 
   lettercount = []
@@ -51,8 +45,20 @@ if __name__ == '__main__':
         for letterC in linletcount:   # Pour Chaque source
           for letterS in lettercount:  # Pour chaque dest 
             if letterS[0]  == letterC[0]: # trouve la lettre...
-              if letterS[1] > letterC[1]: # y a t'il le meme nombre de letttres
+              if letterS[1] < letterC[1]: # y a t'il le meme nombre de letttres
                 invalid = True
  
         if invalid == False:
-          print lines
+          candidates.append (lines)
+
+
+  i=0
+  for candidate in candidates:
+    i = i + 1 
+    print candidate,  
+    if i > column:
+      i=0
+      print "\n", 
+ 
+
+
