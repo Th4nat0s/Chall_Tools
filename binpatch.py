@@ -9,7 +9,7 @@
 
 
 # Big Hug to bmiseplon sur #python-fr
-# This Code is clean :)
+#This Code is clean :)
 
 import re
 import sys

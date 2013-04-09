@@ -3,6 +3,16 @@
 import sys
 import commands
 
+try:
+  import magic
+except ImportError:
+  print 'python-magic is not installed, file types will not be available'
+  sys.exit(1)  
+
+
+
+
+
 # v 0.1
 
 # Copyleft Thanat0s
@@ -10,7 +20,13 @@ import commands
 #
 # Licence GNU GPL 
 
-FILE = 'image.sys'
+# Needs two arg if not... help
+if len(sys.argv) != 2:
+        print 'Harvest and extract'
+        print 'To Use: '+ sys.argv[0]+  ' filename'
+        sys.exit(1)
+FILE = sys.argv[1]
+
 file = open(FILE, 'rb')
 FILEARRAY = bytearray(file.read())
 file.close()
@@ -24,8 +40,10 @@ I = FILESIZE - 64
 BOUND = FILESIZE
 
 while I > 64:
-  open('temp.dat','wb').write(FILEARRAY[I:BOUND])
-  STATUS, FILERESULT = commands.getstatusoutput ("file -b temp.dat" )
+  with magic.Magic as m:
+    FILERESULT = m.id_buffer(FILEARRAY[I:BOUND])
+ ## open('temp.dat','wb').write(FILEARRAY[I:BOUND])
+ ## STATUS, FILERESULT = commands.getstatusoutput ("file -b temp.dat" )
   if not FILERESULT == 'data':
     print ('%.8X %s') % (I ,FILERESULT )
     sys.stdout.flush()

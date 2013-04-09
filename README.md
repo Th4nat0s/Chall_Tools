@@ -17,6 +17,7 @@ dcod_zeustr.py: Decode strings in Zeus <br>
 
 <b>F</b><br>
 filetyperipper.py: Detect all filetype contained in a binary
+findword.py: find word for scrable
 
 <b>P</b><br>
 peentro.py: find anomalies by name or entropy in sections of a PE file.<br>
