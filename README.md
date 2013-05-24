@@ -11,6 +11,7 @@ binpatch.py : Patch a file, allow regex matches.
 
 <b>C</b><br>
 cprint : Column print a file (only ascii printable)
+crpytoracle: Find crypto constantes in a file
 
 <b>D</b><br>
 dcod_zeustr.py: Decode strings in Zeus <br>
