@@ -8,6 +8,7 @@ aslr : Switch on/off aslr (for lazy guys)
 
 <b>B</b><br>
 binpatch.py : Patch a file, allow regex matches.
+/bdoor : Backdoors and reverse shells<br>
 
 <b>C</b><br>
 cprint : Column print a file (only ascii printable)
@@ -25,7 +26,7 @@ peentro.py: find anomalies by name or entropy in sections of a PE file.<br>
 phpeval.py: Deobfuscate php code like eval(gzinflate(base64(backdoorcode)))
 
 <b>R</b><br>
-ropval.py : Find values in ELF, usefull for rop like ADD EAX,[EBX]
+ropval.py : Find values in ELF, usefull for rop like ADD EAX,[EBX]<br>
 
 <b>X</b><br>
 xlentro.py : Xor Lenght Entropy - Show Shannon Entropy on a file, Usefull for determining XOR crypted file key lenght.<br>
