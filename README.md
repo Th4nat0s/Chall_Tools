@@ -21,6 +21,9 @@ dcod_zeustr.py: Decode strings in Zeus <br>
 filetyperipper.py: Detect all filetype contained in a binary
 findword.py: find word for scrable
 
+<b>H</b><br>
+httpsvrgar.py: A on purpose very RAW httpserver. Usefull for sending garbage<br>
+
 <b>P</b><br>
 peentro.py: find anomalies by name or entropy in sections of a PE file.<br>
 phpeval.py: Deobfuscate php code like eval(gzinflate(base64(backdoorcode)))
