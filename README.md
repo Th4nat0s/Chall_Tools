@@ -18,6 +18,7 @@ crpytoracle: Find crypto constantes in a file
 dcod_zeustr.py: Decode strings in Zeus <br>
 
 <b>F</b><br>
+f5discovery.py: Detect F5 SLB and give backend IP and port if sticked 
 filetyperipper.py: Detect all filetype contained in a binary
 findword.py: find word for scrable
 
