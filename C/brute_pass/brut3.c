@@ -23,9 +23,10 @@ int extern mybrute () asm ("mybrute") ; // (unsigned char *);
 // ************ Variables **********
 
 int	g_pass_min ; // min char len
-int g_thread;  
+int g_thread , g_map;  
 int g_char_max,pass_len,g_pass_len, g_char_min;
 int g_break_on_win, g_print ;
+char g_map_char[255];
 int (*hash_fonc)( char * );
 
 sem_t mutex;  // semaphore 
@@ -97,35 +98,36 @@ void * brute_force (void *args) {
 	if (g_print ) {
 		pthread_mutex_lock(&lock);
 		timeprint();
-		printf ("Len %d Thread %i start: '%.*s%c' to  '%.*s%c' \n",max_len,actual_args->tid , max_len-1, tmp_buff, min_char, max_len-1, tmp_buff, str_max);  
+		printf ("Len %d Thread %i start: '%.*s%c' to  '%.*s%c' \n",max_len,actual_args->tid , max_len-1, tmp_buff, actual_args->str_min,max_len-1, tmp_buff, str_max);  
 		pthread_mutex_unlock(&lock);
  	}
+
+	// When spare time....
 	// The Big working Loop.. tant que le dernier char est <...
 	while (tmp_buff[max_len-1] <= str_max ) {
 	for (idx = min_char; idx <= char_max  ; idx++ )  { // loop on 1st Char
-		 	// printf( "-->%s<--\n",tmp_buff);
-			if ( (*hash_fonc)(tmp_buff)) { // Test candidat
+			if ((*hash_fonc)(tmp_buff)) { // Test candidat
 					pthread_mutex_lock(&lock);
 					timeprint();
-					printf("Got a Winner ---->");
+					printf("! Found -->");
 					hexprint(tmp_buff,max_len);
-					printf ("<->%s<---- WIN\n",tmp_buff);
+					printf ("<-->%s<--\n",tmp_buff);
 					pthread_mutex_unlock(&lock);
 					if (g_break_on_win)	exit(0);  // Break on WIN
 			}	
 		tmp_buff[0]++ ; // inc char
 		}
 
-	//	 printf( "-->%s<--\n",tmp_buff);
 	// apres 1char, Scan et inc/dec char autour
 		for (idx = 0; idx < max_len-1; idx++)  { 
     	if (tmp_buff[idx] > char_max ) {  // inc char suivant
      		tmp_buff[idx] = min_char;
-       	tmp_buff[idx+1]++;
-      }
-		}
+       		tmp_buff[idx+1]++;
+      	}
+	  }
 	}
-	
+	// End Big working loop...
+
 	if (g_print ) {
 		pthread_mutex_lock(&lock);  // print byebye
 		timeprint();
@@ -140,28 +142,26 @@ void * brute_force (void *args) {
 
 // Main programm
 int mainjob() {
-	int i,slot,interval,reste,charlen; 
-	int cand_min, cand_max;
+  int i,slot,interval,reste,charlen; 
+  int cand_min, cand_max;
   
   pthread_t mythreads[g_thread];
   sem_init(&mutex, 0,g_thread-1); 
 
-	for (pass_len = g_pass_min; pass_len <= g_pass_len ; pass_len++ )  { 
-		charlen = (g_char_max - g_char_min) + 1;
+  for (pass_len = g_pass_min; pass_len <= g_pass_len ; pass_len++ )  { 
+    charlen = (g_char_max - g_char_min) + 1;
+    if ( g_thread > charlen ) g_thread = charlen ;
+	interval = charlen / g_thread;
+	reste = charlen - ( interval * g_thread );
 
-		if ( g_thread > charlen ) g_thread = charlen ;
+	slot = 0;
 
-		interval = charlen / g_thread;
-		reste = charlen - ( interval * g_thread );
-
-		slot = 0;
-
-		// Launch loop
-		for ( i=0; i < g_thread; ++i ) {
-			// job distribution	
-			cand_min = slot + g_char_min;
-			if (reste > 0) {
-				slot++;
+	// Launch loop
+	for ( i=0; i < g_thread; ++i ) {
+	  // job distribution	
+	  cand_min = slot + g_char_min;
+	  if (reste > 0) {
+	    slot++;
 				reste--;
 			}
 			slot = slot + interval - 1;
@@ -214,8 +214,10 @@ int main( int argc, char *argv[] ){
 	g_pass_len =4 ; // Max char len
 	g_char_min = 97; // min char commence au espace
   	g_char_max = 122; // Maximum tilda
- 	g_break_on_win = 0; // true ;
+ 	g_break_on_win = True ; // true ;
 	g_print = True; // Print Debug
+	g_map = False; // Print Debug
+	g_map_char[0]=0;
 
 	// Set default Hash
 	hash_fonc = &mybrute;
@@ -225,8 +227,9 @@ int main( int argc, char *argv[] ){
 	  for (idx = 1 ; idx < argc; idx++){
         // print Help
 		if (strcmp(argv[idx],"-h") ==0 ) {
-	      printf("Brut3  - (c) Thanat0s\nUsage:\n\t-t thread\n\t-M max char\n\t-m min char\n");
-		  printf("\t-print output pwd\n\t-q no output\n");
+	      printf("Brut3  - (c) Thanat0s - 2013\nUsage:\n\t-t [int] thread\n\t-M [int] max char\n\t-m [int] min char\n");
+		  printf("\t-print only output pwd\n\t-q quiet mode\n\t-c [Aa0FC] Standard charset\n\t-cc [charset] only if '-c C' is selected\n");
+		  printf("\t-nowin don't stop on find\n");
 		  printf("Default %d Threads, %d-%d All printable\n",g_thread,g_pass_min,g_pass_len);
 		  exit(0);
 		} 
@@ -259,21 +262,45 @@ int main( int argc, char *argv[] ){
 		  g_break_on_win = False;
 		  g_print = False;
 		}
-		if (strcmp(argv[idx],"-C") ==0 ) {
+		if (strcmp(argv[idx],"-nowin") ==0 ){
+		  g_break_on_win = False;
+		}
+		if (strcmp(argv[idx],"-c") ==0 ) {
 		  idx++;
 		  if (argc == idx) bigerror( "-C Missing value");
-		  if (strcmp(argv[idx],"a")==0) { g_char_min = 97; g_char_max = 122; } // a-z
-		  if (strcmp(argv[idx],"A")==0) { g_char_min = 65; g_char_max = 90 ; } // A-Z
-		  if (strcmp(argv[idx],"0")==0) { g_char_min = 48; g_char_max = 57 ; } // 0-9
-		  if (strcmp(argv[idx],"F")==0) { g_char_min = 32; g_char_max = 126; } // Full
-		  }
+		  if (strcmp(argv[idx],"a")==0) { g_char_min = 97; g_char_max = 122; } else // a-z
+		  if (strcmp(argv[idx],"A")==0) { g_char_min = 65; g_char_max = 90 ; } else // A-Z
+		  if (strcmp(argv[idx],"0")==0) { g_char_min = 48; g_char_max = 57 ; } else // 0-9
+		  if (strcmp(argv[idx],"F")==0) { g_char_min = 32; g_char_max = 126; } else // Full
+		  if (strcmp(argv[idx],"C")==0) { g_map = True; } else { 
+		  bigerror ("Unknown Charactere scheme"); // Custom
+		  } 	
+		 
+		 //eelse {
+		//  	bigerror ("Unknown Charactere scheme"); // Custom
+		}
+
+		// parse charlen
+		if (strcmp(argv[idx],"-cc") ==0 ) {
+		  idx++;
+		  if (argc == idx) bigerror( "-cc Missing value") ;
+		  strcpy(g_map_char,argv[idx]);
+	  	}
 	  }
 	}
 
 	// Variable post parse check
 	if ( hash_fonc == &print_pass) g_thread = 1; // When to display one thread only
 	if (g_pass_len < g_pass_min) bigerror("Min an Max len inconcistencies") ; 
+	if (g_map_char[0] == 0 ) {
+	 	puts("toto");
+	 	 if ( g_map == 1 )	bigerror("custom charset not specified") ;
+		}
+	
 	//hash_fonc = &mybrute;
+
+	// print job
+	printf("JOB Summary: Thread %d, Len %d-%d, Charset '%c' to '%c'\n",g_thread,g_pass_min,g_pass_len,g_char_min,g_char_max);
 	
 	// Start the JOB
 	mainjob();
