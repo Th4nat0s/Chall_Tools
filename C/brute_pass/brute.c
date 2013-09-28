@@ -15,7 +15,7 @@ ascii de 32 a 126 =
 #include <time.h>
 #include <semaphore.h>
 
-int extern mybrute () asm ("mybrute");
+int extern mybrute () asm ("mybrute") ; // (unsigned char *);
 
 #define True 1;
 #define False 0;
@@ -25,8 +25,8 @@ int extern mybrute () asm ("mybrute");
 int	g_pass_min ; // min char len
 int g_thread;  
 int g_char_max,pass_len,g_pass_len, g_char_min;
-int g_break_on_win ;
-int (*hash_fonc)( unsigned char * );
+int g_break_on_win, g_print ;
+int (*hash_fonc)( char * );
 
 sem_t mutex;  // semaphore 
 pthread_mutex_t lock; // lock
@@ -52,7 +52,7 @@ void timeprint(void) {
 }
 
 // Hexadecimal print
-void hexprint(unsigned char buf[255],int x) {
+void hexprint( char buf[255],int x) {
 	int i;
 	for (i = 0; i < x; i++) {
     if (i > 0) printf(":");
@@ -60,15 +60,18 @@ void hexprint(unsigned char buf[255],int x) {
 				}
 }
 
-int print_pass(unsigned char *mystring) {
-	printf("%s\n",mystring);
+int print_pass( char *mystring) {
+	//printf("%s\n",mystring);
+	//fputs(mystring,stdout); 
+	//fputs("\n",stdout); 
+	puts(mystring);
 	return(0);
 }
 
 // BruteForce loop from AAA to ZZZ
 void * brute_force (void *args) {
   //int max_len,char_max, min_char,str_min, str_max;
-	unsigned char tmp_buff[255];
+	 char tmp_buff[255];
 	int idx,max_len,char_max,str_max,min_char;
   
 	brute_mythread_struct *actual_args = args;
@@ -85,11 +88,12 @@ void * brute_force (void *args) {
 	tmp_buff[actual_args->max_len]=0; // Create StringZ
 
 
-	pthread_mutex_lock(&lock);
-	timeprint();
-	printf ("Len %d Thread %i start: '%.*s%c' to  '%.*s%c' \n",max_len,actual_args->tid , max_len-1, tmp_buff, min_char, max_len-1, tmp_buff, str_max);  
-	pthread_mutex_unlock(&lock);
- 	
+	if (g_print ) {
+		pthread_mutex_lock(&lock);
+		timeprint();
+		printf ("Len %d Thread %i start: '%.*s%c' to  '%.*s%c' \n",max_len,actual_args->tid , max_len-1, tmp_buff, min_char, max_len-1, tmp_buff, str_max);  
+		pthread_mutex_unlock(&lock);
+ 	}
 	// The Big working Loop.. tant que le dernier char est <...
 	while (tmp_buff[max_len-1] <= str_max ) {
 	for (idx = min_char; idx <= char_max  ; idx++ )  { // loop on 1st Char
@@ -115,10 +119,14 @@ void * brute_force (void *args) {
       }
 		}
 	}
-	pthread_mutex_lock(&lock);  // print byebye
-	timeprint();
-	printf ("Thread %d finished\n",actual_args->tid);
-	pthread_mutex_unlock(&lock);
+	
+	if (g_print ) {
+		pthread_mutex_lock(&lock);  // print byebye
+		timeprint();
+		printf ("Thread %d finished\n",actual_args->tid);
+		pthread_mutex_unlock(&lock);
+	}
+	
 	sem_post(&mutex);       /* up semaphore */
 	// End Threaad
   pthread_exit(0);
@@ -178,8 +186,10 @@ int mainjob() {
 		pthread_join (mythreads[i], NULL);
   }
 
+	if ( g_print){
 	timeprint();
-	printf("All job done\n");
+	puts("All job done");
+	}
 	return 0;
 }
 
@@ -199,6 +209,7 @@ int main( int argc, char *argv[] ){
 	g_char_min = 97; // min char commence au espace
   g_char_max = 122; // Maximum tilda
   g_break_on_win = 0; // true ;
+	g_print = True; // Print Debug
 
 	hash_fonc = &mybrute;
 
@@ -206,7 +217,7 @@ int main( int argc, char *argv[] ){
 		for (idx = 0 ; idx < argc; idx++){
 			if (strcmp(argv[idx],"-h") ==0 ){
 				printf("Brut3 (c) Thanat0s\nUsage:\n\t-t thread\n\t-M max char\n\t-m min char\n");
-				printf("\t-print output pwd\n");
+				printf("\t-print output pwd\n\t-q no output\n");
 				printf("Default 4 Threads, 1-8 All printable\n");
 				exit(0);\
 			} 
@@ -233,9 +244,16 @@ int main( int argc, char *argv[] ){
 				}
 	
 		}
+			if (strcmp(argv[idx],"-q") ==0 ){
+				g_print = False;
+			}
 			if (strcmp(argv[idx],"-print") ==0 ){
+				char buffer[65535];
+				setvbuf(stdout, buffer, _IOFBF, sizeof(buffer));
 				hash_fonc = &print_pass;
 				g_thread = 1;
+				g_break_on_win = False;
+				g_print =True;
 				}
 	}
 }
