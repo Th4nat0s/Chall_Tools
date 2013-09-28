@@ -1,14 +1,14 @@
-all: brute
+all: brut3
 
-force: clean brute
+force: clean brut3
 
 clean:
-	rm brute *.o
+	rm brut3 *.o
 
-brute: brute.c hash.o
-	gcc -Wall -c brute.c -lpthread 
-	gcc hash.o brute.o -lpthread -o brute -ggdb
-	chmod +x brute
+brut3: brut3.c hash.o
+	gcc -Wall -c brut3.c -lpthread 
+	gcc hash.o brut3.o -lpthread -o brut3 -ggdb
+	chmod +x brut3
 
 hash.o: hash.asm
 	yasm -f elf -m x86 hash.asm -o hash.o

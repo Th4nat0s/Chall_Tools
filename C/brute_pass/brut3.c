@@ -60,6 +60,12 @@ void hexprint( char buf[255],int x) {
 				}
 }
 
+
+int bigerror( char *mystring) {
+	printf("Error: %s\n",mystring);
+	exit(1);
+}
+
 int print_pass( char *mystring) {
 	//printf("%s\n",mystring);
 	//fputs(mystring,stdout); 
@@ -193,7 +199,6 @@ int mainjob() {
 	return 0;
 }
 
-
 int main( int argc, char *argv[] ){
 	int idx;
 	
@@ -203,62 +208,77 @@ int main( int argc, char *argv[] ){
 		return 1;
 	}
 
+	// Set default values
 	g_thread =4 ; // Thread 
 	g_pass_min =1 ; // Max char len
 	g_pass_len =4 ; // Max char len
 	g_char_min = 97; // min char commence au espace
-  g_char_max = 122; // Maximum tilda
-  g_break_on_win = 0; // true ;
+  	g_char_max = 122; // Maximum tilda
+ 	g_break_on_win = 0; // true ;
 	g_print = True; // Print Debug
 
+	// Set default Hash
 	hash_fonc = &mybrute;
 
+	// Parse cmd line args
 	if	(argc >=1 ){
-		for (idx = 0 ; idx < argc; idx++){
-			if (strcmp(argv[idx],"-h") ==0 ){
-				printf("Brut3 (c) Thanat0s\nUsage:\n\t-t thread\n\t-M max char\n\t-m min char\n");
-				printf("\t-print output pwd\n\t-q no output\n");
-				printf("Default 4 Threads, 1-8 All printable\n");
-				exit(0);\
-			} 
-			if (strcmp(argv[idx],"-t") ==0 ){
-				idx++;
-				g_thread = atoi( argv[idx])	;
-				if (g_thread == 0) {
-				printf("Error use -t num where num >=1");
-				}
-			}
-		
-			if (strcmp(argv[idx],"-m") ==0 ){
-				idx++;
-				g_pass_min = atoi( argv[idx])	;
-				if (g_thread == 0) {
-				printf("Error use -t num where num >=1");
-				}
-			}	
-			if (strcmp(argv[idx],"-M") ==0 ){
-				idx++;
-				g_pass_len = atoi( argv[idx])	;
-				if (g_thread == 0) {
-				printf("Error use -t num where num >=1");
-				}
-	
+	  for (idx = 1 ; idx < argc; idx++){
+        // print Help
+		if (strcmp(argv[idx],"-h") ==0 ) {
+	      printf("Brut3  - (c) Thanat0s\nUsage:\n\t-t thread\n\t-M max char\n\t-m min char\n");
+		  printf("\t-print output pwd\n\t-q no output\n");
+		  printf("Default %d Threads, %d-%d All printable\n",g_thread,g_pass_min,g_pass_len);
+		  exit(0);
+		} 
+		// Select threads
+		if (strcmp(argv[idx],"-t") ==0 ) {
+		  idx++;
+		  if (argc == idx) bigerror( "-t Missing value");
+	      g_thread = atoi( argv[idx])	;
+		  if (g_thread == 0) bigerror("Use -t num where threads >=1");
+		}	
+		if (strcmp(argv[idx],"-m") ==0 ){
+		  idx++;
+		  if (argc == idx) bigerror( "-m Missing value");
+		  g_pass_min = atoi( argv[idx])	;
+		  if (g_pass_min == 0) bigerror("Use -m where min lenght >=1");
+		}	
+		if (strcmp(argv[idx],"-M") ==0 ){
+		  idx++;
+		  if (argc == idx) bigerror( "-M Missing value");
+		  g_pass_len = atoi( argv[idx])	;
+		  if (g_pass_len == 0) bigerror("Use -M where max lenght >=1");
 		}
-			if (strcmp(argv[idx],"-q") ==0 ){
-				g_print = False;
-			}
-			if (strcmp(argv[idx],"-print") ==0 ){
-				char buffer[65535];
-				setvbuf(stdout, buffer, _IOFBF, sizeof(buffer));
-				hash_fonc = &print_pass;
-				g_thread = 1;
-				g_break_on_win = False;
-				g_print =True;
-				}
+		if (strcmp(argv[idx],"-q") ==0 ){
+		  g_print = False;
+		}
+		if (strcmp(argv[idx],"-print") ==0 ){
+		  char buffer[65535];
+		  setvbuf(stdout, buffer, _IOFBF, sizeof(buffer));
+		  hash_fonc = &print_pass;
+		  g_break_on_win = False;
+		  g_print = False;
+		}
+		if (strcmp(argv[idx],"-C") ==0 ) {
+		  idx++;
+		  if (argc == idx) bigerror( "-C Missing value");
+		  if (strcmp(argv[idx],"a")==0) { g_char_min = 97; g_char_max = 122; } // a-z
+		  if (strcmp(argv[idx],"A")==0) { g_char_min = 65; g_char_max = 90 ; } // A-Z
+		  if (strcmp(argv[idx],"0")==0) { g_char_min = 48; g_char_max = 57 ; } // 0-9
+		  if (strcmp(argv[idx],"F")==0) { g_char_min = 32; g_char_max = 126; } // Full
+		  }
+	  }
 	}
-}
+
+	// Variable post parse check
+	if ( hash_fonc == &print_pass) g_thread = 1; // When to display one thread only
+	if (g_pass_len < g_pass_min) bigerror("Min an Max len inconcistencies") ; 
 	//hash_fonc = &mybrute;
+	
+	// Start the JOB
 	mainjob();
+	
+	// Cleanp
 	pthread_mutex_destroy(&lock);
 	return 0;
 }
