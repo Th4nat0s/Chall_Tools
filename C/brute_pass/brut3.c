@@ -290,7 +290,7 @@ int main( int argc, char *argv[] ){
 	}
 
 	// Variable post parse check
-	if ( hash_fonc == &print_pass) g_thread = 1; // When to display one thread only
+	if ( hash_fonc == &print_pass) g_thread = 4; // When to display one thread only
 	if (g_pass_len < g_pass_min) bigerror("Min an Max len inconcistencies") ; 
 	if (g_map_char[0] == 0 ) {
 	 	puts("toto");
