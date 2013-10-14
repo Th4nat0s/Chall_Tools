@@ -20,6 +20,7 @@ if __name__ == '__main__':
   for i in range(0,32):
     key.append(random.randrange(0xff)) 
 
+  # Joli Print
   asciikey=''
   for i in key:
     asciikey = asciikey + str(hex(i)).partition('x')[2]
@@ -34,13 +35,7 @@ if __name__ == '__main__':
     payload[i] = ((payload[i] ^ key[kidx]) + drift ) % 256
     drift = (drift+1) % 256
     kidx = (kidx + 1) % 32
-  
-  # Cree le container
-  # [Len 32b + keylen][Payload][Key]
-  payload = payload
-  payload_len = len(payload)
  
-  
   # Cree l'include file
   include = "int payloadlen =" + str(payload_len) + ";\n" 
   include = include + "unsigned char key[] =\n"
@@ -61,7 +56,6 @@ if __name__ == '__main__':
     include=include + line
 
   line="         \""
-  print payload_len % 16
   for x in range( 0,(payload_len % 16)):
     line= line + "\\x" + str(hex(payload[j])).partition('x')[2]
     j=j+1
@@ -69,5 +63,5 @@ if __name__ == '__main__':
 
   with open('payload.h', 'w') as f:
       f.write(include)
-
+  print ("Include file ready")
 

