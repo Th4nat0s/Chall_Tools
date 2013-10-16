@@ -1,6 +1,6 @@
 clean:
+	rm *.o
 	rm runpe.exe
-	rm runpeasm.o
 	rm hello.exe
 
 hello: hello.c
@@ -12,11 +12,4 @@ runpeinc: runpeinc.asm
 
 runpe: runpeinc hello runpe.cpp
 	i586-mingw32msvc-c++ -mwindows -O0  runpe.cpp  -c
-	#i586-mingw32msvc-ld --subsystem windows -Bdynamic -o runpe.exe /usr/i586-mingw32msvc/lib/crt2.o -L/usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj -L/usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj -L/usr/i586-mingw32msvc/lib runpeinc.o -lstdc++ -lmingw32 -lgcc -lmoldname -lmingwex -lmsvcrt -lgdi32 -lcomdlg32 -luser32 -lkernel32 -ladvapi32 -lshell32 -lmingw32 -lgcc -lmoldname -lmingwex -lmsvcrt /usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/crtend.o
-	
-	
 	i586-mingw32msvc-ld --subsystem windows -Bdynamic -o runpe.exe /usr/i586-mingw32msvc/lib/crt2.o  -L/usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj -L/usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj -L/usr/i586-mingw32msvc/lib runpeinc.o runpe.o -lstdc++ -lmingw32 -lgcc -lmoldname -lmingwex -lmsvcrt -lgdi32 -lcomdlg32 -luser32 -lkernel32 -ladvapi32 -lshell32 -lmingw32 -lgcc -lmoldname -lmingwex -lmsvcrt /usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj/crtend.o
-	#-o runpe.exe 
-	#-D_UNICODE -mwindows
-	#strip runpe.exe
-#	upx runpe.exe

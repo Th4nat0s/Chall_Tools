@@ -37,31 +37,44 @@ if __name__ == '__main__':
     kidx = (kidx + 1) % 32
 
   # Cree le padding anti antropie
-  counttable=[]
-  for i in range (0,256):
-    counttable.append(0)
 
-  for i in range(0, payload_len):
-    counttable[payload[i]]=counttable[payload[i]] + 1
+  # Pad pour un payload avec une taille multiple de 7
+  for i in range(0, (7-(len(payload) % 7))):
+    payload.append(random.randrange(0xff))
 
-  #for i in range (0,256):
-    #print ( "%d = %d" % (i, counttable[i]))
-
-  entro="" 
-  for j in range (0,6):
-    winner=0
-    count = 0
-    for i in range (0,256):
-      if (count <  counttable[i] ):
-        winner = i  # Char
-        count = counttable[i] # value
-    
-    counttable[winner] = 0
-    entro = entro+(payload_len//50)* chr(winner)
-    print ( "%d = %d" % (winner, count))
-
-
-  entro_len = len(entro) 
+  payload2 = []
+  # Convert en 7 Bytes
+  for b in range(0,len(payload) // 7):
+    i = b*7
+    a0 = payload[i]
+    a1 = payload[i+1]
+    a2 = payload[i+2]
+    a3 = payload[i+3]
+    a4 = payload[i+4]
+    a5 = payload[i+5]
+    a6 = payload[i+6]
+  
+    b0 = a0 & 127
+    b1 = ((a0 & 128)  >> 7) | ((a1 & 63) << 1 )
+    b2 = ((a1 &  192) >> 6 ) | ((a2 & 31) << 2)
+    b3 = ((a2 &  224) >> 5 ) | ((a3 & 15) << 3)
+    b4 = ((a3 &  240) >> 4 ) | ((a4 & 7) << 4)
+    b5 = ((a4 &  248) >> 3 ) | ((a5 & 3) << 5)
+    b6 = ((a5 &  252) >> 2 ) | ((a6 & 1) << 6)
+    b7 = ((a6 &  254) >> 1 ) 
+ 
+    #print ("%x %x %x %x %x %x %x %x = %x %x %x %x %x %x %x"% (b0,b1,b2,b3,b4,b5,b6,b7,a0,a1,a2,a3,a4,a5,a6))
+    payload2.append(b0)
+    payload2.append(b1)
+    payload2.append(b2)
+    payload2.append(b3)
+    payload2.append(b4)
+    payload2.append(b5)
+    payload2.append(b6)
+    payload2.append(b7)
+  
+  payload = payload2
+  payload_len = len (payload)
 
   # Cree l'include file
   include = "int payloadlen =" + str(payload_len) + ";\n" 
@@ -87,25 +100,6 @@ if __name__ == '__main__':
     line= line + "\\x" + str(hex(payload[j])).partition('x')[2]
     j=j+1
   include=include + line + "\";\n"
-  """###
-
-  include = include + "unsigned char entro [] =\n"
-  j  = 0
-  for i in range (0,(entro_len/16)):
-    line="         \""
-    for x in range( 0,16):
-      line= line + "\\x" + str(hex(entro[j])).partition('x')[2]
-      j=j+1
-    line=line+"\"\n"
-    include=include + line
-
-  line="         \""
-  for x in range( 0,(entro_len % 16)):
-    line= line + "\\x" + str(hex(entro[j])).partition('x')[2]
-    j=j+1
-  include=include + line + "\";\n"
-  """###
-
 
   with open('payload.h', 'w') as f:
       f.write(include)

