@@ -54,8 +54,13 @@ noupper
 	cmp edi, 0xE3E945A3   ; test le hash (on cherche  h KERNEL32.DLL
   mov edx, [edx]         ; choppe le module suivant
   mov ebx, [edx+0x10]    ; module base address
-jne next_module           ; on loop ou on sort si c'etait le bon
- 
+
+	cmp edi, 0xE3E945A3   ; test le hash (on cherche  h KERNEL32.DLL
+	je .found
+	cmp edi, 0xB39A1545
+	jne next_module           ; on loop ou on sort si c'etait le bon
+
+.found:
   mov eax,ebx
 	pop ebx
 pop edi

