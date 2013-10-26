@@ -1,0 +1,114 @@
+0123456789
+Ln %d, Col %d  
+Word Wrap
+Compressed,
+Encrypted,
+File
+Hidden,	 Offline,
+ReadOnly,
+System,
+This file contains characters in Unicode format which will be lost if you save this file as an ANSI encoded text file. To keep the Unicode information, click Cancel below and then select one of the Unicode options from the Encoding drop down list. Continue?BPage too small to print one line.
+!&Font...
+&Bottom:
+&Copy	Ctrl+C
+&Edit
+&Encoding:
+&File
+&Find...	Ctrl+F
+&Footer:
+&Go To...	Ctrl+G
+&Header: F2
+&Help
+&Left:
+&Line Number:
+&New	Ctrl+N
+&Open...	Ctrl+O
+&Paste	Ctrl+V
+&Print...	Ctrl+P
+&Printer...
+&Replace...	Ctrl+H
+&Right:
+&Save	Ctrl+S
+&Source:
+&Status Bar
+&Top:
+&Undo	Ctrl+Z
+&View
+.txt
+@&Help Topics
+ANSI
+All Files 
+Be sure that your printer is connected properly and use Control Panel to verify that the printer is configured properly.u%%
+Cancel
+Cannot access your printer.
+Cannot find "%%"
+Cannot print the %% file. Be sure that your printer is connected properly and use Control Panel to verify that the printer is configured properly.
+Common Dialog error (0x%04x)
+Cu&t	Ctrl+X
+DEV Error!
+De&lete	Del
+Do you want to create a new file?FThe text in the %% file has changed.
+Do you want to save the changes?
+E&xit
+Edit
+F&ormat
+Failed to Initialize Print Dialogs. Make sure that your printer is connected properly and use Control Panel to verify that the printer is configured properly.
+FileDescription
+FileVersion
+Find &Next	F3
+Goto line
+ICannot open the %% file.
+InternalName
+L&andscape
+LegalCopyright
+Line number out of range
+Lucida Console
+MAINACC	SLIPUPACC
+MS Shell Dlg
+MainAcc
+Make sure a disk is in the drive you specified.;Cannot find the %% file.
+Make sure that the path and filename are correct.RCannot carry out the Word Wrap command because there is too much text in the file.
+Margins
+Microsoft
+Microsoft Corporation
+Microsoft Corporation. All rights reserved.
+NPENCODINGDIALOG
+Not a valid file name.MCannot create the %% file.
+Now Printing
+Open
+Operating System
+Orientation
+OriginalFilename
+Out of RC string space!!
+P&ortrait
+Page %d
+Page &p
+Page Set&up...
+Page Setup
+Paper
+Preview
+ProductName
+ProductVersion
+Save &As...
+Save As
+Select &All	Ctrl+A
+Si&ze:
+SlipUpAcc
+Text Document
+Text Documents (*.txt)
+Time/&Date	F5
+Translation
+Try printing using smaller font.
+UTF-8
+Unicode
+Unicode big endian
+Untitled
+Use another editor to edit the file.
+VarFileInfo
+Windows
+You cannot quit Windows because the Save As dialog
+You do not have permission to open this file.  See the owner of the file or an administrator to obtain permission.
+commdlg_FindReplace
+commdlg_help
+/\
+dialog box, and then try quitting Windows again.
