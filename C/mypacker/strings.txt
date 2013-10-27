@@ -7,7 +7,6 @@ File
 Hidden,	 Offline,
 ReadOnly,
 System,
-This file contains characters in Unicode format which will be lost if you save this file as an ANSI encoded text file. To keep the Unicode information, click Cancel below and then select one of the Unicode options from the Encoding drop down list. Continue?BPage too small to print one line.
 !&Font...
 &Bottom:
 &Copy	Ctrl+C
@@ -38,10 +37,9 @@ This file contains characters in Unicode format which will be lost if you save t
 @&Help Topics
 ANSI
 All Files 
-Be sure that your printer is connected properly and use Control Panel to verify that the printer is configured properly.u%%
+Be sure that your printer is connected properly and use Control Panel to verify that the printer is configured properly.
 Cancel
 Cannot access your printer.
-Cannot find "%%"
 Cannot print the %% file. Be sure that your printer is connected properly and use Control Panel to verify that the printer is configured properly.
 Common Dialog error (0x%04x)
 Cu&t	Ctrl+X

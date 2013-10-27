@@ -2,13 +2,14 @@ clean:
 	rm *.o
 	rm runpe.exe
 	rm hello.exe
+	rm ostring.inc
 
 hello: hello.c
 	i586-mingw32msvc-gcc hello.c -o hello.exe -lws2_32 
 	strip hello.exe
 
 obstrings: obstrings.py
-	python obstrings.py
+	python obstrings.py > ostrings.inc
 
 runpeinc: runpeinc.asm obstrings 
 	 yasm -f win32 -g cv8 -m x86 runpeinc.asm -o runpeinc.o

