@@ -80,3 +80,4 @@ for words in wtupple:
         print ("0x%x," % line[1])  ,
         break
   print( "0x0; %s" % words[0])
+  print ("GLOBAL str_%s" % tstring) 

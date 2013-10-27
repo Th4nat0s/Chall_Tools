@@ -15,6 +15,8 @@ GLOBAL _ostring
 ; Deobfuscate a string 
 _ostring:
  	int3
+
+	; la string est en esp+4
 	mov	edi, dostring
 	mov esi, str_ntdll
 	xor edx,edx
@@ -42,7 +44,7 @@ _ostring:
 
 _conv7to8
 	;int3	; breakpoint
-	push	ebp
+	 push	ebp
 	mov		ebp,esp
 	push	ebp
 	push	ebx
