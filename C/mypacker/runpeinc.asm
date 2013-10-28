@@ -15,10 +15,11 @@ GLOBAL _ostring
 ; Deobfuscate a string 
 _ostring:
  	int3
-
+	push ebp
+	mov	ebp,esp
 	; la string est en esp+4
 	mov	edi, dostring
-	mov esi, str_ntdll
+	mov esi,[ebp+8]  			; str_ntdll
 	xor edx,edx
 	mov	ecx,[allstroff]   ; offset srtings
 .osloop
@@ -39,6 +40,8 @@ _ostring:
 	xor	eax,eax
 	stosb	
 	mov eax, dostring
+	mov esp,ebp
+	pop	ebp
   ret
 
 
@@ -171,8 +174,8 @@ noupper
   mov ebx, [edx+0x10]    ; module base address
 
 	cmp edi, 0xE3E945A3   ; test le hash (on cherche  h KERNEL32.DLL
-	je .found
-	cmp edi, 0xB39A1545  ; sous seven... Why ?
+	;je .found
+	;cmp edi, 0xB39A1545  ; sous seven... Why ?
 	jne next_module           ; on loop ou on sort si c'etait le bon
 
 .found:
@@ -193,19 +196,30 @@ _getfunction:
 	; esp+c = string
 	; esp+10 = len
 
-	mov	eax,[ebp+0x8]
-   mov ebx,eax
-  mov edx,[eax+60] ; PE base loCATION
-	add eax, edx  
-	mov edx,[eax] ; PE base dans EDX
-  add eax, 0x78
-	mov edx,[eax] ; Export Table offset
-	add ebx,edx	 ;  edx = iat export table
+
+	int3
+	mov		edi,[ebp+0xc] ; Calcul la taille de la string
+	xor		eax,eax
+	mov 	ecx,255
+	repne scasb
+	mov 	al,254
+	sub 	al,cl
+	xchg 	eax,ecx
+
+	mov		eax,[ebp+0x8]
+  mov 	ebx,eax
+  mov 	edx,[eax+60] ; PE base loCATION
+	add		eax, edx  
+	mov 	edx,[eax] ; PE base dans EDX
+  add 	eax, 0x78
+	mov 	edx,[eax] ; Export Table offset
+	add 	ebx,edx	 ;  edx = iat export table
 
   mov [ExpTable],ebx
   
 	mov edx,[ebp+0xC]
-	mov ecx,[ebp+0x10]
+;	mov ecx,[ebp+0x10]
+
 
 section .data
   ExpTable		dd 0
