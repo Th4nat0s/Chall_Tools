@@ -85,14 +85,16 @@ if __name__ == '__main__':
   line=line+"\";\n"
   include=include + line
   
-  include = include + "unsigned char payload [] =\n"
+  include = include + "payload db \n"
   j = 0
   for i in range (0,(payload_len/16)):
-    line="         \""
+    line="      db   "
     for x in range( 0,16):
-      line= line + "\\x" + str(hex(payload[j])).partition('x')[2]
+      line= line + "0x" + str(hex(payload[j])).partition('x')[2] 
+      if x < 15:
+        line = line + ","
       j=j+1
-    line=line+"\"\n"
+    line=line+"\n"
     include=include + line
 
   line="         \""
@@ -101,7 +103,7 @@ if __name__ == '__main__':
     j=j+1
   include=include + line + "\";\n"
 
-  with open('payload.h', 'w') as f:
+  with open('payload.inc', 'w') as f:
       f.write(include)
   print ("Include file ready")
 

@@ -7,10 +7,9 @@ import sys
 strings = []
 fstrings = [ 'ntdll', 'kernel32',"NtResumeThread","WriteProcessMemory","GetThreadContext",
              "SetThreadContext","NtUnmapViewOfSection","GetProcAddress","CreateProcessA",
-             "VirtualAllocEx","ReadProcessMemory","LoadLibrary","c:\\windows\\system32\\notepad.exe"]
+             "VirtualAllocEx","ReadProcessMemory","LoadLibrary" ] 
 
 if __name__ == '__main__':
-
 
 # Load Strings Dictionnary
   with open('strings.txt', 'r') as f:
