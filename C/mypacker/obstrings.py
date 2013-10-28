@@ -7,7 +7,7 @@ import sys
 strings = []
 fstrings = [ 'ntdll', 'kernel32',"NtResumeThread","WriteProcessMemory","GetThreadContext",
              "SetThreadContext","NtUnmapViewOfSection","GetProcAddress","CreateProcessA",
-             "ReadProcessMemory","LoadLibrary","c:\\windows\\system32\\notepad.exe"]
+             "VirtualAllocEx","ReadProcessMemory","LoadLibrary","c:\\windows\\system32\\notepad.exe"]
 
 if __name__ == '__main__':
 
@@ -55,7 +55,7 @@ i=0;
 for line in solution:
   i=i+1
   tstring=strings[line[0]-1].replace("\"","\\\"")
-  tstring=tstring.replace("%","\\%")
+  #tstring=tstring.replace("%","\\%")
   print ("bstr%d: db \"%s\", 0x00" % (i,tstring)) 
 
 i=0

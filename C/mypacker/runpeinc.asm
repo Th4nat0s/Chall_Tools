@@ -14,7 +14,6 @@ GLOBAL _ostring
 
 ; Deobfuscate a string 
 _ostring:
- 	int3
 	push ebp
 	mov	ebp,esp
 	; la string est en esp+4
@@ -46,7 +45,6 @@ _ostring:
 
 
 _conv7to8
-	;int3	; breakpoint
 	 push	ebp
 	mov		ebp,esp
 	push	ebp
@@ -150,7 +148,8 @@ _findkernel:
 .fake:
 	db 0xfe	
 .here:
-	mov edx, [fs:edx+eax]  ;  pointer sur PEB  fs:0x30
+ ;int3
+  mov edx, [fs:edx+eax]  ;  pointer sur PEB  fs:0x30
   mov eax,0x90909090 
 	mov edx, [edx+0x0C]    ;  pointeur sur  PEB->Ldr
   mov edx, [edx+0x14]    ;  premier module de la liste InMemoryOrder 
@@ -168,18 +167,15 @@ noupper
   rol edi, 3       ; mov the hash
 	xor edi,eax					; Hash du pauvre...   
   loop loop_modulename    ; dec ecx loop
-	; 0xB39A1545 msvcrt.dll, E3E945A3 kernel32.dll
-	cmp edi, 0xE3E945A3   ; test le hash (on cherche  h KERNEL32.DLL
-  mov edx, [edx]         ; choppe le module suivant
+	; 0xB39A1545 kernel32.dll ; msvcrt.dll, E3E945A3 kernel32.dll
+	cmp edi, 0xB39A1545 ;  0x0E3E945A ;3   ; test le hash (on cherche  h KERNEL32.DLL
+  je .found
+	mov edx, [edx]         ; choppe le module suivant
   mov ebx, [edx+0x10]    ; module base address
-
-	cmp edi, 0xE3E945A3   ; test le hash (on cherche  h KERNEL32.DLL
-	;je .found
-	;cmp edi, 0xB39A1545  ; sous seven... Why ?
-	jne next_module           ; on loop ou on sort si c'etait le bon
+	jmp next_module
 
 .found:
-  mov eax,ebx
+	mov eax, [edx+0x10]         ; choppe le module suivant
 	pop ebx
   pop edi
   pop esi	
@@ -197,7 +193,6 @@ _getfunction:
 	; esp+10 = len
 
 
-	int3
 	mov		edi,[ebp+0xc] ; Calcul la taille de la string
 	xor		eax,eax
 	mov 	ecx,255

