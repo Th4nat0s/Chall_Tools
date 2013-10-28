@@ -195,21 +195,20 @@ noupper
 
 ; trouve le nom de l'executable
 _getexec:
- ;int3
  mov 	eax,0x30;
  mov 	edx, [fs:eax]  ;  pointer sur PEB  fs:0x30
  mov 	edx, [edx+0x0C]    ;  pointeur sur  PEB->Ldr
  mov 	edx, [edx+0x14]    ;  premier module de la liste InMemoryOrder 
  mov 	edi, [edx+0x28]    ;  pointeur sur la liste (unicode)
  
- mov 	eax,0
+ sub	eax,eax
  mov 	ecx,512	; max scan 512 char 
  repne 	scasw ; search 0000
  repne 	scasw ; search next 0000
  push	edi
  mov	ecx,512
  repne  scasw		; search 0000 after unicode
- mov	eax,511-1	; Debut strings moins la deniere quote
+ mov	eax,512	; Debut strings plus le 00 de fin 
  sub	eax,ecx		; eax contient string len in unicode 
  pop	esi	; retour debut de ligne.
  mov	edi,dostring
@@ -222,9 +221,6 @@ _getexec:
  stosb ; dostring sans unicode
 .savepas 
  loop	.getexecloop
- 
- xor eax,eax
- stosb				; create strinqz		
  
  mov eax,dostring
 
