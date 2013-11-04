@@ -14,6 +14,9 @@ obstrings: obstrings.py
 runpeinc: runpeinc.asm obstrings 
 	 yasm -f win32 -g cv8 -m x86 runpeinc.asm -o runpeinc.o
 
+loaddll:
+	i586-mingw32msvc-g++ loaddll.c -o loaddll.exe
+
 runpe: runpeinc hello runpe.cpp
 	i586-mingw32msvc-c++ -mwindows -O0  runpe.cpp  -c
 	i586-mingw32msvc-ld --subsystem windows -Bdynamic -o runpe.exe /usr/i586-mingw32msvc/lib/crt2.o -L/usr/lib/gcc/i586-mingw32msvc/4.2.1-sjlj -L/usr/i586-mingw32msvc/lib runpeinc.o runpe.o -lstdc++ -lmingw32 -lgcc -lmoldname -lmingwex -lmsvcrt -lgdi32 -lcomdlg32 -luser32 -lkernel32 -ladvapi32 -lshell32 -lmingw32 -lgcc -lmoldname -lmingwex -lmsvcrt 

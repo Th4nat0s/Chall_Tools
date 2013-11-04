@@ -2,7 +2,7 @@
 #include <string.h>
 #include <windows.h>
 #include <winsock2.h>
-
+#include <stddef.h>
 int esize;
 LPVOID FileToMem(LPCSTR szFileName) { 
 	HANDLE hFile;
@@ -36,19 +36,20 @@ int main(){
 	int size;
 	LPVOID pFile;
 	pFile = FileToMem("c:\\windows\\system32\\kernel32.dll");
-//  pFile[295] = 0x50; // Change Load offset
-
-///	asm ("int3");
+	char * buffer = (char *)pFile;
+	buffer[295] = 0x50; // Change Load offset
+//	replace_str(buffer,"GetProcAddress","GetProcAddre55");
+///	asm ("in$t3");
   FILE * wFile;
   wFile = fopen ("c:\\mykernel.dll", "wb");
-  fwrite (pFile, sizeof(char), esize , wFile);
+  fwrite (buffer, sizeof(char), esize , wFile);
   fclose (wFile);
 PGetProcAddress xGetProcAddress;
 PGetEnvironmentStringsA xGetEnvironmentStringsA;
 	HINSTANCE Hkernel32  = LoadLibrary("c:\\mykernel.dll");
 
 printf("kernel32 getprocadd\n");
-   xGetProcAddress = PGetProcAddress(GetProcAddress(Hkernel32,"GetProcAddress"));
+   xGetProcAddress = PGetProcAddress(GetProcAddress(Hkernel32,"GetProcAddre55"));
 printf("mylib getprocadd\n");
 xGetEnvironmentStringsA = PGetEnvironmentStringsA(xGetProcAddress(Hkernel32,"GetEnvironmentStringsA"));
 
