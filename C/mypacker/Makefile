@@ -15,7 +15,8 @@ runpeinc: runpeinc.asm obstrings
 	 yasm -f win32 -g cv8 -m x86 runpeinc.asm -o runpeinc.o
 
 loaddll:
-	i586-mingw32msvc-g++ loaddll.c -o loaddll.exe
+	yasm -f win32 -g cv8 -m x86 runpeinc.asm -o runpeinc.o
+	i586-mingw32msvc-g++ runpeinc.o loaddll.c -o loaddll.exe
 
 runpe: runpeinc hello runpe.cpp
 	i586-mingw32msvc-c++ -mwindows -O0  runpe.cpp  -c

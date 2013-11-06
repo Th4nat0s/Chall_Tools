@@ -27,9 +27,32 @@ LPVOID FileToMem(LPCSTR szFileName) {
 }
 
 
+void replace_str( char * buff,int bsize, char *  what, char * to){
+	int i,j,win;
+	for(j = 0; j <= bsize ; ++j) {
+		if (buff[j] == what[0]) {  // Find first letter
+			win=0;
+			for ( i = 0; i <= strlen(what)+1 ; i++) {
+				if (buff[i+j] == what[i]) {  // Compare string 
+				  win++;
+	    	}
+			}
+  		if (win == strlen(what)+1) {  // FOUND
+				printf("found at %d\n",j);
+				for ( i = 0; i <= strlen(what) ; i++) {
+				      buff[i+j] = to[i];  // replace string
+						}
+			}
+		}
+	}
+}
+
 typedef HINSTANCE (WINAPI * PLoadLibrary ) ( LPCTSTR lpLibFileName ); 
 typedef LONG (WINAPI * PGetProcAddress)( HMODULE hModule,LPCSTR lpProcName );
 typedef LPTCH (WINAPI *  PGetEnvironmentStringsA) (void);
+int extern getfunction( int kernel, int library ) asm ("_getfunction");
+
+
 
 int main(){
 	char *content; 
@@ -37,25 +60,42 @@ int main(){
 	LPVOID pFile;
 	pFile = FileToMem("c:\\windows\\system32\\kernel32.dll");
 	char * buffer = (char *)pFile;
-	buffer[295] = 0x50; // Change Load offset
-//	replace_str(buffer,"GetProcAddress","GetProcAddre55");
-///	asm ("in$t3");
+	buffer[295] = 0x60; // Change Load offset
+	char toto[]=  "GetProcAddress";
+	char titi[] = "HelloMyFriends";
+
+	char atoto[]=  "GetEnvironmentStringsA";
+	char atiti[] = "ILoveBigRabbitsandDead";
+	
+	char ktoto[]=  "KERNEL32";
+	char ktiti[]=  "LAPINCON";
+	replace_str(buffer,esize , toto, titi );
+	replace_str(buffer,esize , ktoto, ktiti );
+	replace_str(buffer,esize , atoto, atiti );
+
+///	asm ("in$t3";
   FILE * wFile;
   wFile = fopen ("c:\\mykernel.dll", "wb");
   fwrite (buffer, sizeof(char), esize , wFile);
   fclose (wFile);
-PGetProcAddress xGetProcAddress;
-PGetEnvironmentStringsA xGetEnvironmentStringsA;
+	PGetProcAddress xGetProcAddress;
+	PGetEnvironmentStringsA xGetEnvironmentStringsA;
+	
+	printf("Load tuned kernel32\n");
 	HINSTANCE Hkernel32  = LoadLibrary("c:\\mykernel.dll");
+	printf("new kernel at %X", (int) Hkernel32);
+	
+	printf("Find getprocadd\n");
+  xGetProcAddress = (PGetProcAddress) getfunction((int)Hkernel32, (int)&titi );
+	printf("GetProcAddress at %X\n",(int) xGetProcAddress);
+//	GetLastError();
 
-printf("kernel32 getprocadd\n");
-   xGetProcAddress = PGetProcAddress(GetProcAddress(Hkernel32,"GetProcAddre55"));
-printf("mylib getprocadd\n");
-xGetEnvironmentStringsA = PGetEnvironmentStringsA(xGetProcAddress(Hkernel32,"GetEnvironmentStringsA"));
+	printf("find a lib with mylib getprocadd\n");
+	xGetEnvironmentStringsA = (PGetEnvironmentStringsA) getfunction ((int)Hkernel32,(int)&atiti);
 
-printf("mylib envstring\n");
+printf("call mylib envstring\n");
 	xGetEnvironmentStringsA();
-printf("kernel32 envstring\n");
+printf("call kernel32 envstring\n");
 	GetEnvironmentStringsA();
 
 }
