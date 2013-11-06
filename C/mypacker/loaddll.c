@@ -50,9 +50,9 @@ void replace_str( char * buff,int bsize, char *  what, char * to){
 typedef HINSTANCE (WINAPI * PLoadLibrary ) ( LPCTSTR lpLibFileName ); 
 typedef LONG (WINAPI * PGetProcAddress)( HMODULE hModule,LPCSTR lpProcName );
 typedef LPTCH (WINAPI *  PGetEnvironmentStringsA) (void);
+typedef VOID (WINAPI * PSleep) ( DWORD dwMilliseconds);
+
 int extern getfunction( int kernel, int library ) asm ("_getfunction");
-
-
 
 int main(){
 	char *content; 
@@ -66,12 +66,16 @@ int main(){
 
 	char atoto[]=  "GetEnvironmentStringsA";
 	char atiti[] = "ILoveBigRabbitsandDead";
+
+	char btoto[]=  "Sleep";
+	char btiti[] = "Lapin"; 
 	
 	char ktoto[]=  "KERNEL32";
 	char ktiti[]=  "LAPINCON";
 	replace_str(buffer,esize , toto, titi );
 	replace_str(buffer,esize , ktoto, ktiti );
 	replace_str(buffer,esize , atoto, atiti );
+	replace_str(buffer,esize , btoto, btiti );
 
 ///	asm ("in$t3";
   FILE * wFile;
@@ -80,7 +84,8 @@ int main(){
   fclose (wFile);
 	PGetProcAddress xGetProcAddress;
 	PGetEnvironmentStringsA xGetEnvironmentStringsA;
-	
+  PSleep xSleep;
+
 	printf("Load tuned kernel32\n");
 	HINSTANCE Hkernel32  = LoadLibrary("c:\\mykernel.dll");
 	printf("new kernel at %X", (int) Hkernel32);
@@ -90,12 +95,30 @@ int main(){
 	printf("GetProcAddress at %X\n",(int) xGetProcAddress);
 //	GetLastError();
 
+
+	printf("Find Sleep\n");
+  xSleep = (PSleep) getfunction((int)Hkernel32, (int)&btiti );
+	printf("Sleep at %X\n",(int) xSleep);
+//	GetLastError();
+
+
+
 	printf("find a lib with mylib getprocadd\n");
 	xGetEnvironmentStringsA = (PGetEnvironmentStringsA) getfunction ((int)Hkernel32,(int)&atiti);
+
+	printf("find a lib with mylib getprocadd\n");
 
 printf("call mylib envstring\n");
 	xGetEnvironmentStringsA();
 printf("call kernel32 envstring\n");
 	GetEnvironmentStringsA();
+
+
+printf("call mylib sleep\n");
+	xSleep(10000);
+printf("call kernel32 sleep\n");
+	Sleep(10000);
+	printf("bye");
+
 
 }
