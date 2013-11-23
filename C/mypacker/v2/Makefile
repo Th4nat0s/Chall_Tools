@@ -2,15 +2,24 @@ clean:
 	rm *.obj 
 	rm runpe.exe
 	rm hello.exe
+	rm payload.inc
+	rm payload.bin
 
+# The file embeded
 hello: hello.c
 	i586-mingw32msvc-gcc hello.c -o hello.exe -lws2_32 
 	strip hello.exe
 
+# Cypher the embeded file 
 helloinc: hello
 	./obfpe.py hello.exe
 
-runpe: helloinc runpe.res
+# DLL and Function hash generator
+hashsinc: hashname.py
+	./hashname.py
+
+# Main compilation
+runpe: helloinc runpe.res hashsinc
 	yasm -f win32 -m x86 runpe.asm -o runpe.obj
 	wine ../../../../masm/polink /ENTRY:start /SUBSYSTEM:WINDOWS ../../../../masm/user32.lib ../../../../masm/kernel32.lib runpe.res runpe.obj /verbose 2>/dev/null
 

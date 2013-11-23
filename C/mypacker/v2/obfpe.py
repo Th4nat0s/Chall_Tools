@@ -87,6 +87,11 @@ if __name__ == '__main__':
 
   include = ('PELEN dd 0x%X ; PE Len\n' % payload_len)
   include = include + ('BBLEN db 0x%X ; BBox Key Len\n' % bboxlen) 
+  include = include + ('EPELEN equ 0x%X; PE Len equ\n' % payload_len)
+  include = include + ('RANDOMs equ 0x%X ; Random 8 bits\n' % random.randrange(0x16))
+  include = include + ('RANDOM8 equ 0x%X ; Random 8 bits\n' % random.randrange(0xff))
+  include = include + ('RANDOM16 equ 0x%X ; Random 8 bits\n' % random.randrange(0xffff))
+  include = include + ('RANDOM32 equ 0x%X ; Random 8 bits\n' % random.randrange(0xffffffff)) 
   with open('payload.inc', 'w') as f:
      f.write(include)
 
