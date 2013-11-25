@@ -3,9 +3,9 @@ clean:
 	rm hello.exe
 	rm payload.inc
 	rm payload.bin
+	rm runpe.res
 	rm runpe.obj
 	rm nop.obj
-	rm runpe.res
 
 # The file embeded
 hello: hello.c
@@ -30,7 +30,7 @@ runpe: runpe.res hashsinc
 	wine ../../../../masm/polink /ENTRY:start /SUBSYSTEM:WINDOWS ../../../../masm/user32.lib ../../../../masm/kernel32.lib runpe.res runpe.obj /verbose 2>/dev/null
 
 runpe.res: runpe.rc
-	i586-mingw32msvc-windres runpe.rc runpe.res -O resp
+	i586-mingw32msvc-windres runpe.rc runpe.res -O res
 
 all: hello helloinc runpe
 
