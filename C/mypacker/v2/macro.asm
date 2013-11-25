@@ -28,6 +28,8 @@
 %define IMAGE_OPTIONAL_HEADER__SizeOfImage 0x38
 %define IMAGE_OPTIONAL_HEADER__SizeOfHeaders 0x3C
 
+; PEB
+%define PEB__ImageBaseAdress 0x8
 
 ; Pe IMAGE_DATA_DIRECTORY structure
 %define IMAGE_DATA_DIRECTORY__LEN  0x70

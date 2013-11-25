@@ -153,3 +153,8 @@ _getfunction:
         pop ebp
         retn 8
 
+_K32func:
+	invokel _getdll,HASH_KERNEL32.DLL
+  invokel _getfunction, eax, HASH_READPROCESSMEMORY
+	ret
+

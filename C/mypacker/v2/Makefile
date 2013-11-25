@@ -18,8 +18,12 @@ helloinc: hello
 hashsinc: hashname.py
 	./hashname.py
 
+nop:
+	yasm -f win32 -m x86 nop.asm -o nop.obj
+	wine ../../../../masm/polink /ENTRY:start /SUBSYSTEM:WINDOWS ../../../../masm/user32.lib ../../../../masm/kernel32.lib nop.obj /verbose 2>/dev/null
+
 # Main compilation
-runpe: helloinc runpe.res hashsinc
+runpe: runpe.res hashsinc
 	yasm -f win32 -m x86 runpe.asm -o runpe.obj
 	wine ../../../../masm/polink /ENTRY:start /SUBSYSTEM:WINDOWS ../../../../masm/user32.lib ../../../../masm/kernel32.lib runpe.res runpe.obj /verbose 2>/dev/null
 
