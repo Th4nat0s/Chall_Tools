@@ -5,6 +5,7 @@ clean:
 	rm payload.bin
 	rm runpe.obj
 	rm nop.obj
+	rm runpe.res
 
 # The file embeded
 hello: hello.c
@@ -31,5 +32,5 @@ runpe: runpe.res hashsinc
 runpe.res: runpe.rc
 	i586-mingw32msvc-windres runpe.rc runpe.res -O resp
 
-all: hello helloinc
+all: hello helloinc runpe
 

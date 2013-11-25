@@ -36,6 +36,7 @@ _bbdecypher:
 
 	mov esi,PAYLOAD
 	add	esi,ecx 			; esi + V_BBLEN à la fin du BBkey
+	dec	esi
 
 	mov	eax,[V_ROWCNT] ; Row x bblen
 	mov edx,0
@@ -45,7 +46,6 @@ _bbdecypher:
 	mov	ebx,PAYLOAD		; Debut de l'include
 	add ebx,ecx				; + [V_BBLEN]	= Debut du PE bonneté
   add	ebx,eax				; Debut du PE bonneté + (Row x BBlen)
-	
 
 	%ifdef OBS
 	sub	edx,RANDOM16
@@ -55,6 +55,7 @@ _bbdecypher:
 	add	edi,eax				; Destination du PE + (Row x BBLEN) 
 
 	mov	eax,0
+	
 
 	%ifdef OBS
 	call	edx				; Decypher a row
@@ -75,10 +76,11 @@ _bbdecypher:
 
 ; Va Bonneter une rangée , use eax,ecx,edx,ebx
 _dorowbbox:							
-	mov		al,cl						; 
+	mov		al,cl
+	dec   al
 	xlatb									; Load byte à poser, src ebx+al
 	mov	 	dl,al
-	lodsb		 							; Deplacement a faire , read from bbkey
+	lodsb	 								; Deplacement a faire , read from bbkey
 	mov	byte [edi+eax],dl ; pose byte + déplacement
 	loop	_dorowbbox
 	ret
