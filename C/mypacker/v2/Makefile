@@ -1,9 +1,10 @@
 clean:
-	rm *.obj 
 	rm runpe.exe
 	rm hello.exe
 	rm payload.inc
 	rm payload.bin
+	rm runpe.obj
+	rm nop.obj
 
 # The file embeded
 hello: hello.c

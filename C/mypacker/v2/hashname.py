@@ -3,7 +3,7 @@ import random
 
 STRINGS = [ 'ntdll.dll', 'kernel32.dll', 'VirtualAlloc',"NtResumeThread","WriteProcessMemory","GetThreadContext",
             "SetThreadContext","NtUnmapViewOfSection","GetProcAddress","CreateProcessA",
-            "VirtualAllocEx","ReadProcessMemory","LoadLibrary"]
+            "VirtualAllocEx","ReadProcessMemory","LoadLibrary","ResumeThread"]
 
 def ROR(x, n,bits=32):
     mask = (2L**n) - 1
