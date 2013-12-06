@@ -8,7 +8,7 @@ _peexec:
 
 	mov	esi,[PEBASE]
 	lodsw
-	cmp	ax,'MZ' ^ ((RANDOM8 << 8) + RANDOM8) ; est-ce bien un EXE
+	cmp	ax,'ZM' ^ ((RANDOM8 << 8) + RANDOM8) ; est-ce bien un EXE
 	jne	.end
 
 	add	esi,IMAGE_DOS_HEADER__PEOffset - 0x2 

