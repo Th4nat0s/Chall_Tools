@@ -30,6 +30,7 @@ peentro.py: find anomalies by name or entropy in sections of a PE file.<br>
 phpeval.py: Deobfuscate php code like eval(gzinflate(base64(backdoorcode)))
 
 <b>R</b><br>
+ripurl.py : Find and retrieve any URL found in a file even a binary one<br>
 ropval.py : Find values in ELF, usefull for rop like ADD EAX,[EBX]<br>
 
 <b>X</b><br>
