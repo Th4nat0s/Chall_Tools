@@ -37,7 +37,7 @@ for URL in FOUND:
   if (URL.lower()<>"https://" and URL.lower()<>"http://"):
     CANDIDATE.append( URL)
 
-RIPNAME = "./RIPLOG-'+sys.argv[1]"
+RIPNAME = './RIPLOG-'+sys.argv[1]
 if not os.path.exists(RIPNAME):
     os.makedirs(RIPNAME)
 
@@ -50,12 +50,12 @@ for URI in CANDIDATE:
   try:
     urllib.urlretrieve (URI,RIPNAME+"/"+"RIP-"+MD5)
     print "Ok"
-    STATUS = STATUS + "Ok"
+    STATUS = STATUS + " Ok"
   except:
     print "Failed"
-    STATUS = STATUS + "Failed"
+    STATUS = STATUS + " Failed"
   finally:
-    LOG.append(STATUS+"\n")
+    LOG.append(STATUS)
     ID=ID+1 
 
 file = open(RIPNAME+'/RIPLOG-'+sys.argv[1],'w')
