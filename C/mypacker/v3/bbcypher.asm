@@ -5,23 +5,25 @@
 %define V_BBDCIPH EBP-((0x04*5)+RANDOMs)
 
 
-; ### DeXor the BB key
+; ### DeXor the BB key depuis l'include binaire vers la structure en ram
 _bbdxor:
+  push  ebp
+  mov ebp,[RAMSTRU]
   mov bl,RANDOMK1
   xor bl,RANDOMK2
   xor bl,RANDOMK3
   xor bl,RANDOMK4
   xor bl,RANDOMK5
-  mov ecx,[BBLEN]
-  mov esi,[PAYLOAD]
-  mov edi,esi
+  mov ecx,BBLEN
+  mov esi,PAYLOAD  ; Debut de l'include dars .code
+  lea edi,[RAMSTRU__BBOX + ebp]
 .lbbdxor
   
   lodsb 
   xor al,bl
   stosb
   loop  .lbbdxor
-  
+  pop   ebp
   ret
 
 
@@ -37,12 +39,11 @@ _bbdecypher:
 	push _dorowbbox + RANDOM16 ; Offset obfuscated du shif row
 	%endif
 	
-	mov	eax,[PELEN]
+	mov	eax,EPELEN
+	mov ecx,BBLEN
 
-	xor	ecx,ecx			; convert BBLEN to Dword
-	add cl,[BBLEN]
 	
-	pop dword [V_BBDCIPH]
+;	pop dword [V_BBDCIPH]
 	mov [V_BBLEN],ecx	
 
 	xor	edx,edx
@@ -73,7 +74,8 @@ _bbdecypher:
 	sub	edx,RANDOM16
 	%endif
 
-	mov	edi,[PEBASE] 	; Destination of PE
+	mov	edi,[RAMSTRU] 	; Destination of PE
+  add edi,RAMSTRU__PE
 	add	edi,eax				; Destination du PE + (Row x BBLEN) 
 
 	mov	eax,0
@@ -93,7 +95,7 @@ _bbdecypher:
 	
 	mov	esp,ebp
 	pop	ebp
-	
+  int3 	
 	ret
 
 ; Va Bonneter une rangée , use eax,ecx,edx,ebx
