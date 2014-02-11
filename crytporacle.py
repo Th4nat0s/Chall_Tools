@@ -14,6 +14,7 @@ import sys
 
 
 CONSTANTES = [
+[ 'TEA,XTEA,XXTEA' , [ 0x9E3779B9]],
 [ 'Base64 map',   [ 0x41424344, 0x45464748, 0x494a4b4c, 0x4d4e4f50,
                     0x51525354, 0x55565758, 0x595a6162, 0x63646566,
                     0x6768696a, 0x6b6c6d6e, 0x6f707172, 0x73747576,
