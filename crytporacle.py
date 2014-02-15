@@ -1,4 +1,5 @@
 #!/usr/bin/python
+# coding=utf-8 
 
 # v 0.1
 
@@ -14,7 +15,9 @@ import sys
 
 
 CONSTANTES = [
-[ 'TEA,XTEA,XXTEA' , [ 0x9E3779B9]],
+
+[ 'TEA' , [ 0xC6EF3720,0x9E3779B9]],
+[ 'XTEA,XXTEA' , [ 0x9E3779B9]],
 [ 'Base64 map',   [ 0x41424344, 0x45464748, 0x494a4b4c, 0x4d4e4f50,
                     0x51525354, 0x55565758, 0x595a6162, 0x63646566,
                     0x6768696a, 0x6b6c6d6e, 0x6f707172, 0x73747576,
@@ -151,4 +154,9 @@ if __name__ == '__main__':
           if DWORD == VALUES:
             VALFOUND = VALFOUND + 1
             break
-    print ' Found ' + str( ( VALFOUND * 100) / VALCOUNT ) + '%' 
+    RATE= ( VALFOUND * 100) / VALCOUNT
+    if (RATE <> 100):
+      print ' ' + str( ( VALFOUND * 100) / VALCOUNT ) + '%' 
+    else:
+      print ' ' + str( ( VALFOUND * 100) / VALCOUNT ) + '% -- Cypher constantes Found' 
+
