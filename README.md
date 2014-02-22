@@ -7,11 +7,11 @@ Userfull tools for Security Challenges
 aslr : Switch on/off aslr (for lazy guys)
 
 <b>B</b><br>
-binpatch.py : Patch a file, allow regex matches.
+binpatch.py : Patch a file, allow regex matches.<br>
 /bdoor : Backdoors and reverse shells<br>
 
 <b>C</b><br>
-cprint : Column print a file (only ascii printable)
+cprint : Column print a file (only ascii printable)<br>
 crpytoracle: Find crypto constantes in a file
 
 <b>D</b><br>
@@ -21,9 +21,9 @@ dcod_zeustr.py: Decode strings in Zeus <br>
 entro.py: Give a file entropy and detect xor key len 
 
 <b>F</b><br>
-f5discovery.py: Detect F5 SLB and give backend IP and port if sticked 
-filetyperipper.py: Detect all filetype contained in a binary
-findword.py: find word for scrable
+f5discovery.py: Detect F5 SLB and give backend IP and port if sticked<br> 
+filetyperipper.py: Detect all filetype contained in a binary<br>
+findword.py: find word for scrable<br>
 
 <b>H</b><br>
 httpsvrgar.py: A on purpose very RAW httpserver. Usefull for sending garbage<br>
