@@ -134,7 +134,10 @@ if __name__ == '__main__':
     for VALUES in CONST[1]:  # Test AABBCCDD
       VALCOUNT = VALCOUNT + 1
       for I in range (0, len(filearray) - 8):
-        DWORD = struct.unpack('L',str(filearray[I:I+4]))[0]
+        
+        
+
+        DWORD = struct.unpack('I',str(filearray[I:I+4]))[0]
         if DWORD == VALUES:
           VALFOUND = VALFOUND + 1
           break
@@ -150,7 +153,7 @@ if __name__ == '__main__':
           VALUES >>= 8
         VALUES = val
         for I in range (0, len(filearray) - 8):
-          DWORD = struct.unpack('L',str(filearray[I:I+4]))[0]
+          DWORD = struct.unpack('I',str(filearray[I:I+4]))[0]
           if DWORD == VALUES:
             VALFOUND = VALFOUND + 1
             break
