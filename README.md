@@ -39,6 +39,9 @@ phpeval.py: Deobfuscate php code like eval(gzinflate(base64(backdoorcode)))
 ripurl.py : Find and retrieve any URL found in a file even a binary one<br>
 ropval.py : Find values in ELF, usefull for rop like ADD EAX,[EBX]<br>
 
+<b>T</b><br>
+spoof_tftp_bckp.py : Bypass ACL for backing up Cisco conf
+
 <b>X</b><br>
 xlentro.py : Xor Lenght Entropy - Show Shannon Entropy on a file, Usefull for determining XOR crypted file key lenght.<br>
 xphp.py: Xtract only php code from any  file
