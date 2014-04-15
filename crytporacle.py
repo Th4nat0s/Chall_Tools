@@ -15,7 +15,7 @@ import sys
 
 
 CONSTANTES = [
-
+[ 'CRC32', [ 0x04c11db7 ]],
 [ 'TEA' , [ 0xC6EF3720,0x9E3779B9]],
 [ 'XTEA,XXTEA' , [ 0x9E3779B9]],
 [ 'Base64 map',   [ 0x41424344, 0x45464748, 0x494a4b4c, 0x4d4e4f50,
