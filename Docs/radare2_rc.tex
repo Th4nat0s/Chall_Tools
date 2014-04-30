@@ -39,7 +39,6 @@
 \def\key#1{$\langle${\rm{\it#1\/}}$\rangle$}
 \def\rapos{\char125}
 \def\lapos{\char123}
-\def\bs{\char92}
 \def\bt{\`{}}
 \def\lt{\char60}
 \def\gt{\char62}
@@ -106,8 +105,8 @@
 \vskip 0.3cm
 \sect{Flagspaces}
 \cm{fs}{display flagspaces}
-\cm{fs *}{set all flagspace}
-\cm{fs sections}{set flagspace}
+\cm{fs *}{select all flagspace}
+\cm{fs [sections]}{select one flagspace}
 
 \vskip 0.3cm
 \sect{Flags}
@@ -124,6 +123,74 @@
 \cm{ie}{Display entrypoint}
 \cm{iS}{Display sections}
 \cm{ir}{Display relocations}
+
+
+\vskip 0.3cm
+\sect{Visual mode}
+\cm{V}{Enter visual mode}
+\cm{p/P}{rotate modes (hex, disasm, debug, words, buf)}
+\cm{q}{back to radare shell}
+\cm{hjkl}{move around (or HJKL) (left-down-up-right)}
+\cm{Enter}{follow address of jump/call}
+\cm{sS}{step / step over}
+\cm{o}{go/seek to given offset}
+\cm{.}{seek to program counter}
+\cm{/}{in cursor mode search in current block}
+\cm{:cmd}{run radare command}
+\cm{;[-]cmt}{add/remove comment}
+\cm{/*+-[]}{change block size, [] = resize hex.cols}
+\cm{>||<}{seek aligned to block size}
+\cm{i/a/A}{(i)nsert hex, (a)ssemble code, visual (A)ssembler}
+\cm{b/B}{toggle breakpoint / automatic block size}
+\cm{c/C}{toggle (c)ursor and (C)olors}
+\cm{d[f?]}{define function, data, code, ..}
+\cm{D}{enter visual diff mode (set diff.from/to)}
+\cm{e}{edit eval configuration variables}
+\cm{f/F}{set/unset flag}
+\cm{gG}{go seek to begin and end of file (0-\dollar{}s)}
+\cm{mK/'K}{mark/go to Key (any key)}
+\cm{M}{walk the mounted filesystems}
+\cm{n/N}{seek next/prev function/flag/hit (scr.nkey)}
+\cm{o}{go/seek to given offset}
+\cm{R}{randomize color palette (ecr)}
+\cm{t}{track flags (browse symbols, functions..)}
+\cm{T}{browse anal info and comments}
+\cm{v}{visual code analysis menu}
+\cm{V/W}{(V)iew graph (agv?), open (W)ebUI}
+\cm{uU}{undo/redo seek}
+\cm{x}{show xrefs to seek between them}
+\cm{yY}{copy and paste selection}
+\cm{z}{toggle zoom mode}
+
+
+\vskip 0.3cm
+\sect{Searching}
+\cm{/ foo\bs{}00}{search for string 'foo\bs{}0'}
+\cm{/b}{search backwards}
+\cm{//}{repeat last search}
+\cm{/w foo}{search for wide string 'f\bs{}0o\bs{}0o\bs{}0'}
+\cm{/wi foo}{search for wide string ignoring case}
+\cm{/! ff}{search for first occurrence not matching}
+\cm{/i foo}{search for string 'foo' ignoring case}
+\cm{/e /E.F/i}{match regular expression}
+\cm{/x ff0033}{search for hex string}
+\cm{/x ff..33}{search for hex string ignoring some nibbles}
+\cm{/x ff43 ffd0}{search for hexpair with mask}
+\cm{/d 101112}{search for a deltified sequence of bytes}
+\cm{/!x 00}{inverse hexa search (find first byte != 0x00)}
+\cm{/c jmp [esp]}{search for asm code (see search.asmstr)}
+\cm{/a jmp eax}{assemble opcode and search its bytes}
+\cm{/A}{search for AES expanded keys}
+\cm{/r sym.printf}{analyze opcode reference an offset}
+\cm{/R}{search for ROP gadgets}
+\cm{/P}{show offset of previous instruction}
+\cm{/m magicfile}{search for matching magic file}
+\cm{/p patternsize}{search for pattern of given size}
+\cm{/z min max}{search for strings of given size}
+\cm{/v[?248] num}{look for a asm.bigendian 32bit value}
+
+
+
 
 % Footer
 \vfill \hrule\smallskip
