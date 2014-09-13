@@ -1,12 +1,24 @@
+ifdef outfile
+ outfile = :
+else
+ outfile = runpe.exe
+endif
+
+ifdef infile
+ infile = :
+else
+ infile = hello.exe
+endif
+
 clean:
-	rm hello.exe ; true
-	rm payload.inc ; true
-	rm payload.bin ; true
-	rm runpe.res ; true
-	rm runpe.obj ; true
-	rm hello.h ; true
-	rm runpe.exe ; true
-	rm packed.exe ; true
+	rm $(infile) ; /bin/true
+	rm payload.inc ; /bin/true
+	rm payload.bin ; /bin/true
+	rm runpe.res ; /bin/true
+	rm runpe.obj ; /bin/true
+	rm hello.h ; /bin/true
+	rm $(outfile) ; /bin/true
+	rm packed.exe ; /bin/true
 
 # The file embeded
 hello: hello.c 
@@ -14,22 +26,21 @@ hello: hello.c
 	strip hello.exe
 
 # Cypher the embeded file 
-helloinc: hello
-	./obfpe.py hello.exe
+helloinc: $(infile)
+	./obfpe.py $(infile)
 
 # DLL and Function hash generator
 hashsinc: hashname.py
 	./hashname.py
 
 # Main compilation
-path = ../../../../
-output = packed.exe
+pathlink = ../../../../
+
 runpe: runpe.res hashsinc helloinc runpe.res 
 	yasm -f win32 -m x86 runpe.asm -o runpe.obj
-	wine $(path)masm/polink /ENTRY:start /SUBSYSTEM:CONSOLE $(path)masm/msvcrt.lib $(path)masm/user32.lib $(path)masm/kernel32.lib runpe.res runpe.obj /verbose 2>/dev/null
-	sed 's/.text\x00/UPX0\x00\x00/' runpe.exe > temp
-	sed 's/.data\x00/UPX1\x00\x00/' temp > $(output)
-	rm runpe.exe
+	wine $(pathlink)masm/polink /ENTRY:start /SUBSYSTEM:CONSOLE $(pathlink)masm/msvcrt.lib $(pathlink)masm/user32.lib $(pathlink)masm/kernel32.lib runpe.res runpe.obj /verbose 2>/dev/null
+	sed 's/.text\x00/UPX0\x00\x00/' $(outfile) > temp
+	sed 's/.data\x00/UPX1\x00\x00/' temp > $(outfile)
 	rm temp
 
 # Resources incones
@@ -38,5 +49,5 @@ runpe.res: runpe.rc
 
 all: hello helloinc runpe
 
-pack: helloinc runpe
+pack: helloinc runpe 
 

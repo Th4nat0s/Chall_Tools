@@ -10,12 +10,12 @@ _getexec:
  mov  edx, [edx+0x0C]    ;  pointeur sur  PEB->Ldr
  mov  edx, [edx+0x14]    ;  premier module de la liste InMemoryOrder 
  mov  edi, [edx+0x28]    ;  pointeur sur la liste (unicode)
-
  xor eax,eax
- mov  ecx,512 ; max scan 512 char 
- ;repne  scasw ; search 0000
+; mov  ecx,512 ; max scan 512 char 
+ repne  scasw ; search 0000 bypass shortname
  repne  scasw ; search next 0000
  push edi
+ 
  mov  ecx,512
  repne  scasw   ; search 0000 after unicode
  mov  eax,512 ; Debut strings plus le 00 de fin 
