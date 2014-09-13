@@ -19,8 +19,7 @@ def loadfile(LFFILE):
 R32 = "(E(AX|BC|CX|DX|SP|BP)"
 R16 = "(AX|BX|CX|DX|SP|BP)"
 R8 =  "([A-D](L|H)"
-RULES = [ [["xor (R32),(R32)","mov (R32),0"],["mov (R32),0"]]
-  ]
+RULES = [ [["xor (R32),(R32)","mov (R32),0"],["mov (R32),0"] ]]
 
 # Global variables
 CODE = []
@@ -57,7 +56,7 @@ def O_XOR(REG):
 
 def O_INC(REG):
   #XorREGwithREG;testReturn 
-  randome.seed(REG)
+  random.seed(REG)
   TIR = random.randrange(0,2)
   if ( TIR == 0): 
     return ("inc %s"%REG) 
@@ -111,8 +110,9 @@ if __name__ == '__main__':
     if re.match(r"(\.\S+:\s)?MOV\s+"+rREG32+",\d+", CODE[IDX], flags=re.IGNORECASE): 
       RGX = re.search(r"\s(.*),(.*)(:?\s|$)",CODE[IDX])
       REG = RGX.group(1)
-      IMMED = int(RGX.group(2))
-      CODE[IDX] = O_MOV_R32_I(REG,IMMED)  
+      if not str(RGX.group(2).upper).find("X"):
+        IMMED = int(RGX.group(2))
+        CODE[IDX] = O_MOV_R32_I(REG,IMMED)  
     if re.match(r"xor\s+((:?e[abcd]x)|(:?E[SD]I)|EBP|ESP),\1", CODE[IDX], flags=re.IGNORECASE): 
       REG = re.search(r"\s(.*),",CODE[IDX]).group(1)
       CODE[IDX] = O_XOR(REG)  
@@ -125,7 +125,7 @@ if __name__ == '__main__':
     if re.match(r"call\s" , CODE[IDX], flags=re.IGNORECASE):
       ADDR = re.search(r"\s(.*)(\s|$)",CODE[IDX]).group(1)
       CODE[IDX] = O_CALL(ADDR)
-    if re.match(r"loop\s" , CODE[IDX], flags=re.IGNORECASE):
+    if re.match(r"loop\s+ECX" , CODE[IDX], flags=re.IGNORECASE):
       ADDR = re.search(r"\s(.*)(\s|$)",CODE[IDX]).group(1)
       CODE[IDX] = O_LOOP(ADDR)
     print CODE[IDX] 
