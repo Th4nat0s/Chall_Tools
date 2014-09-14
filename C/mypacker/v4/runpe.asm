@@ -70,9 +70,9 @@ _start:
 
 _fend  
   ; Cleanup affichage bug dans CMD
-	invokel _getdll,HASH_KERNEL32.DLL
-	invokel _getfunction, eax, HASH_SLEEP
-  invokel eax, 1000
+;	invokel _getdll,HASH_KERNEL32.DLL
+;	invokel _getfunction, eax, HASH_SLEEP
+ ; invokel eax, 1000
   invoke _ExitProcess@4, NULL
 	ret
 

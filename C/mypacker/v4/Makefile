@@ -49,7 +49,7 @@ runpe_cons: runpe.res hashsinc helloinc runpe.res
 
 runpe: runpe.res hashsinc helloinc runpe.res 
 	yasm -f win32 -m x86 runpe.asm -o runpe.obj
-	wine $(pathlink)masm/polink /ENTRY:start /SUBSYSTEM:NATIVE $(pathlink)masm/user32.lib $(pathlink)masm/kernel32.lib runpe.res runpe.obj /verbose 2>/dev/null
+	wine $(pathlink)masm/polink /ENTRY:start /SUBSYSTEM:WINDOWS $(pathlink)masm/user32.lib $(pathlink)masm/kernel32.lib runpe.res runpe.obj /verbose 2>/dev/null
 	sed 's/.text\x00/UPX0\x00\x00/' $(outfile) > temp
 	sed 's/.data\x00/UPX1\x00\x00/' temp > $(outfile)
 	rm temp

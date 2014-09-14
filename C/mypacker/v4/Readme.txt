@@ -10,7 +10,7 @@ This will do a fake UPX with a packed executable launched with runpe method
 
 usage : 
 
-(DEFECT) make pack infile=myfile.exe
+make pack infile=myfile.exe
 
 or for console apps
 
