@@ -7,7 +7,7 @@ hashsinc: hashname.py
 
 nop: hashsinc
 	yasm -f win32 -m x86 nop.asm -o nop.obj
-	wine ../../../masm/polink /ENTRY:start /SUBSYSTEM:WINDOWS ../../../masm/user32.lib ../../../masm/kernel32.lib nop.obj /verbose 2>/dev/null
+	wine ../../../masm32/bin/polink /ENTRY:start /SUBSYSTEM:WINDOWS ../../../masm32/lib/user32.lib ../../../masm32/lib/kernel32.lib nop.obj /verbose 2>/dev/null
 
 all: nop
 
