@@ -27,7 +27,7 @@ def decrotte(filearray):
       sys.stdout.flush()
       try:
         PE = pefile.PE(data="".join(chr(b) for b in filearray[M::]))
-        for section in PE.sections:
+        for section in PE.sections:    # va chercher les data la dernierse section fait fois
           location = section.PointerToRawData
           locationadd = section.SizeOfRawData
         Z = location + locationadd
@@ -43,7 +43,7 @@ def decrotte(filearray):
 
 def xor(key, filearray):
   filearrayout = filearray
-  for I in range (0,len(filearrayout)):
+  for I in range (1,len(filearrayout)): # Pas 0, s'occuppe pas de l'exe host
     filearrayout[I] = filearrayout[I] ^ key
   return filearrayout
 
@@ -67,7 +67,7 @@ if result:
   sys.exit(0)
 
 print("[!] No PE found, will try the chinese style; SIMPLE XOR")
-key = 0
+key = 1
 while key < 256:
   print ("[*] Try with xor key %d :" % key),
   result = decrotte(xor(key,filearray))
