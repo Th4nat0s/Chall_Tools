@@ -44,6 +44,9 @@ def decrotte(filearray, text):
   #sys.stdout.write( "\r"+int(columns)*" "+"\r")
   return dumped
 
+def win():
+  print"\n[i] I was victorious..."
+  sys.exit(0)
 
 def xor(key,inc, filearray):
   filearrayout = filearray
@@ -79,8 +82,7 @@ with open(FILENAME, 'rb') as f:
 
 result = decrotte(filearray,"Searching for PE")
 if result:
-  print"\n[i] I was victorious..."
-  sys.exit(0)
+  win()
 if XOR == False:
   print "[!] Sorry nothing.. try with -XOR"
   sys.exit(0)
@@ -91,7 +93,7 @@ key = 1
 while key < 256:
   result = decrotte(xor(key,0,filearray),("8Bits Xor key %d"% key))
   if result:
-    sys.exit(0)
+    win()
   key = key+1
 
 print("[!] No PE found, will try the chinese style; XOR Shifted")
@@ -99,10 +101,10 @@ key = 1
 while key < 256:
   result = decrotte(xor(key,1,filearray),("8Bits Xor Inc key %d"% key))
   if result:
-    sys.exit(0)
+    win()
   result = decrotte(xor(key,-1,filearray),("8Bits Xor Dec key %d"% key))
   if result:
-    sys.exit(0)
+    win()
   key = key+1
 
 print("[!] No PE found, will try the chinese style; XOR Shifted looking every offsets")
@@ -113,9 +115,12 @@ while key < 256:
     key2 = (key + offset) % 256
     result = decrotte(xor(key2,1,filearray),("8Bits Xor Inc key %d offset  %d"% (key,offset)))
     if result:
-      sys.exit(0)
+      win()
     result = decrotte(xor(key2,-1,filearray),("8Bits Xor Dec key %d offset %d"% (key,offset)))
     if result:
       sys.exit(0)
     offset = offset + 1
   key=key+1
+
+
+print "[!] Sorry nothing.. "
