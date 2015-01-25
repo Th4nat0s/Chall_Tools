@@ -16,9 +16,10 @@ crpytoracle: Find crypto constantes in a file
 
 <b>D</b><br>
 dcod_zeustr.py: Decode strings in Zeus <br>
+decrotePE.py: Extract PE from any data dump<br>
 
 <b>E</b><br>
-entro.py: Give a file entropy and detect xor key len 
+entro.py: Give a file entropy and detect xor key len<br>
 
 <b>F</b><br>
 f5discovery.py: Detect F5 SLB and give backend IP and port if sticked<br> 
