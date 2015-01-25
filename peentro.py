@@ -1,36 +1,17 @@
 #!/usr/bin/python
 
-import hashlib
 import pefile
-import math
 import sys, os
 
 # Analyse PE Section entropy
-# v 0.1
+# v 0.2
 
-# Need https://code.google.com/p/pefile
+# Need https://code.google.com/p/pefile et on lui doit TOUT
 
 # Copyleft Thanat0s
 # http://Thanat0s.trollprod.org
 #
 # Licence GNU GPL
-
-def shan(stin):
-        fstList = list(stin)
-        falphabet = list(set(fstList))
-        ffreqList = []
-        for fsymbol in falphabet:
-                fctr = 0
-                for fsym in fstList:
-                        if fsym == fsymbol:
-                                fctr += 1
-                ffreqList.append(float(fctr) / len(fstList))
-        fent = 0.0
-        for ffreq in ffreqList:
-                fent = fent + ffreq * math.log(ffreq, 2)
-        fent = -fent
-        return (fent)
-
 
 SECTIONS = ['.text', '.bss', '.rdata', '.data', '.rsrc', '.edata', '.idata', '.pdata', '.debug',  '.xdata', '.reloc', '.rsrc', '.code', '.tls']
 
@@ -52,13 +33,12 @@ try:
 except:
     print "Error in loading " + FILENAME
 
-
-print "Section\tEntropy\tBytes\tSize\tMD5\t\t\t\t\tRemark"
+print "Section\t\tEntropy\t\tSize\tMD5\t\t\t\t\tRemark"
 for section in PE.sections:
+  ENTROPY = section.get_entropy()
+  SECTION_NAME = section.Name.strip().replace(chr(0x00),"")
   REMARKS = []
-  ENTROPY = shan(section.data) 
   SECTION_USUAL = True
-  SECTION_NAME = str(section.Name).replace('\0','')
   for names in SECTIONS:
     if names==SECTION_NAME:
       SECTION_USUAL = False
@@ -66,6 +46,5 @@ for section in PE.sections:
     REMARKS.append ( "Unusal Segment" )
   if ENTROPY > 7:
     REMARKS.append ( "High Entropy" )
- 
-  print "%s\t%.2f\t%s\t%s\t%s\t%s" % ( SECTION_NAME , ENTROPY , int(math.ceil(ENTROPY)), section.Misc_VirtualSize , hashlib.md5(section.data).hexdigest(), ','.join(REMARKS) )
+  print ("%s%s\t%s\t%s\t%s\t%s" % (SECTION_NAME ,' '*(8-len(SECTION_NAME)) , ENTROPY, section.SizeOfRawData,   section.get_hash_md5(), ','.join(REMARKS)))
  
