@@ -43,6 +43,6 @@ for M in range(0,len(filearray)-1):
       Z = location + locationadd
       with open(('PE_%d.exe' % M), 'w') as outfile:
           outfile.write(filearray[M:M+Z])
-      print ('PE_%d.exe %d bytes saved' % (M,(M+Z-M)))
+      print ('PE_%d.exe %d bytes saved' % (M,Z))
     except:
       print "False positive"
