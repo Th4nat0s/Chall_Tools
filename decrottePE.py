@@ -43,7 +43,7 @@ def decrotte(filearray):
 
 def xor(key, filearray):
   filearrayout = filearray
-  for I in range (1,len(filearrayout)): # Pas 0, s'occuppe pas de l'exe host
+  for I in range (1,len(filearrayout)): # Pas 0, s'occuppe pas de l'exe host
     filearrayout[I] = filearrayout[I] ^ key
   return filearrayout
 
