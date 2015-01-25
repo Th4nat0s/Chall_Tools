@@ -71,7 +71,7 @@ with open(FILENAME, 'rb') as f:
   for I in range (0, len(filearray)):
     BCK = int( filearray[I])
     filearray[I] = (filearray[I] ^  KEY) % 256
-    KEY = (KEY + INC + BASE ) % 256
+    #KEY = (KEY + (INC + BASE)%256 ) % 256
     LINE =LINE+1
     if LINE < 10:
       print (int(BCK), KEY, INC, BASE, int( filearray[I]) )
@@ -80,6 +80,6 @@ with open(FILENAME, 'rb') as f:
     KEY = (KEY + INC + BASE ) % 256
     BASE = 0
 
-print ('writing output to %s.xor' % FILENAME) 
+print ('writing output to %s.xor' % FILENAME)
 with open(('%s.xor' % FILENAME), 'w') as outfile:
   outfile.write(filearray)
