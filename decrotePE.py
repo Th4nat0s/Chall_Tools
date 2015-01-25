@@ -32,7 +32,7 @@ if not os.path.isfile(FILENAME):
 with open(FILENAME, 'rb') as f:
   filearray = bytearray(f.read())
 
-for M in range(262147,len(filearray)):
+for M in range(0,len(filearray)-1):
   if int(filearray[M]) == ord('M') and  int(filearray[M+1]) == ord('Z') :
     print ("Candidate Found at offset %d" % M),
     try:
