@@ -48,4 +48,5 @@ spoof_tftp_bckp.py : Bypass ACL for backing up Cisco conf
 
 <b>X</b><br>
 xlentro.py : Xor Lenght Entropy - Show Shannon Entropy on a file, Usefull for determining XOR crypted file key lenght.<br>
-xphp.py: Xtract only php code from any  file
+xphp.py: Xtract only php code from any  file<br>
+xor.py: Multi purpose 8 Bit Key file XORer<br>
