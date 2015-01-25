@@ -17,6 +17,36 @@ import sys, os
 #
 # Licence GNU GPL
 
+def decrotte(filearray):
+  dumped = False
+  print ("Canditates:"),
+  sys.stdout.flush()
+  for M in range(0,len(filearray)-1):
+    if int(filearray[M]) == ord('M') and  int(filearray[M+1]) == ord('Z') :
+      print ("%d," % M),
+      sys.stdout.flush()
+      try:
+        PE = pefile.PE(data="".join(chr(b) for b in filearray[M::]))
+        for section in PE.sections:
+          location = section.PointerToRawData
+          locationadd = section.SizeOfRawData
+        Z = location + locationadd
+        with open(('PE_%d.exe' % M), 'w') as outfile:
+            outfile.write(filearray[M:M+Z])
+            dumped = True
+        print ('\n[!] \tFound PE_%d.exe %d bytes saved\n\tContinue scan; ' % (M,Z)),
+      except:
+        pass
+  print "EOF"
+  return dumped
+
+
+def xor(key, filearray):
+  filearrayout = filearray
+  for I in range (0,len(filearrayout)):
+    filearrayout[I] = filearrayout[I] ^ key
+  return filearrayout
+
 # Needs two arg if not... help
 if len(sys.argv) != 2:
         print 'Extract PE from Dump'
@@ -28,21 +58,19 @@ FILENAME = sys.argv[1]
 if not os.path.isfile(FILENAME):
     print 'File not found'
     sys.exit(1)
-
+print "[*] Scanning %s" % FILENAME
 with open(FILENAME, 'rb') as f:
   filearray = bytearray(f.read())
 
-for M in range(0,len(filearray)-1):
-  if int(filearray[M]) == ord('M') and  int(filearray[M+1]) == ord('Z') :
-    print ("Candidate Found at offset %d" % M),
-    try:
-      PE = pefile.PE(data="".join(chr(b) for b in filearray[M::]))
-      for section in PE.sections:
-        location = section.PointerToRawData
-        locationadd = section.SizeOfRawData
-      Z = location + locationadd
-      with open(('PE_%d.exe' % M), 'w') as outfile:
-          outfile.write(filearray[M:M+Z])
-      print ('PE_%d.exe %d bytes saved' % (M,Z))
-    except:
-      print "False positive"
+result = decrotte(filearray)
+if result:
+  sys.exit(0)
+
+print("[!] No PE found, will try the chinese style; SIMPLE XOR")
+key = 0
+while key < 256:
+  print ("[*] Try with xor key %d :" % key),
+  result = decrotte(xor(key,filearray))
+  if result:
+    sys.exit(0)
+  key = key+1
