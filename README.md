@@ -29,6 +29,9 @@ findword.py: find word for scrable<br>
 <b>H</b><br>
 httpsvrgar.py: A on purpose very RAW httpserver. Usefull for sending garbage<br>
 
+<b>M</b><br>
+machouillemacro.py: Add decoy macro for bypassing AV to vba
+
 <b>N</b><br>
 newpy.py: Spawn a new python script skeletton
 
