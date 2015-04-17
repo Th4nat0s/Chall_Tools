@@ -28,6 +28,7 @@ findword.py: find word for scrable<br>
 
 <b>H</b><br>
 httpsvrgar.py: A on purpose very RAW httpserver. Usefull for sending garbage<br>
+httpgrap.py: Grab a screenshot of a website with firefox via selenium
 
 <b>M</b><br>
 machouillemacro.py: Add decoy macro for bypassing AV to vba
