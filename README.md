@@ -27,6 +27,7 @@ filetyperipper.py: Detect all filetype contained in a binary<br>
 findword.py: find word for scrable<br>
 
 <b>H</b><br>
+har2curlloader.py: Convert browser HAR file to Curl-Loader configuration <br>
 httpsvrgar.py: A on purpose very RAW httpserver. Usefull for sending garbage<br>
 httpgrap.py: Grab a screenshot of a website with firefox via selenium
 
