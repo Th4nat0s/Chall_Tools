@@ -46,7 +46,7 @@ def main():
     print ('URL_SHORT_NAME="HIT%d"' % hit)
     print ('REQUEST_TYPE=%s' % querie[1]) 
     if querie[1] == "POST":
-      print ('FORM_USAGE_STRING = "AS_IS"' )
+      print ('FORM_USAGE_TYPE = "AS_IS"' )
       print ('FORM_STRING = "%s"' % querie[3])
     print ('TIMER_URL_COMPLETION = 10000')
     delta = int(current) - int(lasttime)
