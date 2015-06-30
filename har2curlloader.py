@@ -29,7 +29,11 @@ def main():
     time = datetime.datetime.strptime( entries['startedDateTime'],  fmt)
     timedelta = (datetime.datetime.strptime( entries['startedDateTime'], fmt) - lasttime)
     hittime  = int( timedelta.total_seconds() * 1000) 
-    queries.append([hittime,  entries['request']['method'], entries['request']['url']])
+    if entries['request']['method'] == 'POST':
+      data = entries['request']['postData']['text']
+    else:
+      data = None
+    queries.append([hittime,  entries['request']['method'], entries['request']['url'], data])
   queries.sort(key=lambda tup: tup[0]) 
   
   #generate output
@@ -41,8 +45,13 @@ def main():
     print ('URL="%s"' % querie[2]) 
     print ('URL_SHORT_NAME="HIT%d"' % hit)
     print ('REQUEST_TYPE=%s' % querie[1]) 
+    if querie[1] == "POST":
+      print ('FORM_USAGE_TYPE = "%s"' % querie[3])
     print ('TIMER_URL_COMPLETION = 10000')
-    print ('TIMER_AFTER_URL_SLEEP = %s' %( int(current) - int(lasttime)))
+    delta = int(current) - int(lasttime)
+    if delta <= 20:
+      delta = 0
+    print ('TIMER_AFTER_URL_SLEEP = %s' %( delta) )
     lasttime = current
     hit += 1 
     print ('')
