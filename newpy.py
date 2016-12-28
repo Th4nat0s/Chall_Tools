@@ -6,15 +6,15 @@ import os
 
 body = """#!/usr/bin/env python3
 # coding=utf-8
-import re
 import sys
 
 
 # Functions
 def getparam(count):
+    \"\"\"Retrieve the parameters appended \"\"\"
     if len(sys.argv) != count + 1:
-        print ('My command')
-        print ('To Use: %s my params' % sys.argv[0])
+        print('My command')
+        print('To Use: %s my params' % sys.argv[0])
         sys.exit(1)
     else:
         return sys.argv[1]
@@ -23,7 +23,7 @@ def getparam(count):
 # Main Code #####
 def main():
     param = getparam(1)
-
+    print(param)
 
 if __name__ == '__main__':
     main()
