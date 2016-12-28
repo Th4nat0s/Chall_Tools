@@ -1,0 +1,33 @@
+set expandtab ts=4 sw=4 ai
+execute pathogen#infect()
+set statusline+=%#warningmsg#
+set statusline+=%{SyntasticStatuslineFlag()}
+set statusline+=%*
+set wildmenu
+
+let g:syntastic_aggregate_errors = 1
+let g:syntastic_always_populate_loc_list = 1
+let g:syntastic_auto_loc_list = 1
+let g:syntastic_check_on_open = 1
+let g:syntastic_check_on_wq = 0
+let g:syntastic_python_checkers=['pep8', 'python']
+let g:syntastic_python_checker_args='--ignore=E501,E225'
+
+autocmd BufRead,BufNewFile   *.tex set spell spelllang=en_us
+
+let syntastic_mode_map = { 'passive_filetypes': ['asm'] }
+
+set laststatus=2
+let g:airline_powerline_fonts = 1 
+
+if !exists('g:airline_symbols')
+  let g:airline_symbols = {}
+endif
+
+" unicode symbols
+let g:airline_left_sep = '▶'
+let g:airline_right_sep = '◀'
+let g:airline_symbols.linenr = '¶'
+let g:airline_symbols.branch = '⎇'
+let g:airline_symbols.paste = 'ρ'
+let g:airline_symbols.whitespace = 'Ξ'
