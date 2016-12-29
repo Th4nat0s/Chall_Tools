@@ -1,3 +1,6 @@
+"# To install airlines with pathogen
+"# git clone https://github.com/vim-airline/vim-airline ~/.vim/bundle/vim-airline
+
 set expandtab ts=4 sw=4 ai
 execute pathogen#infect()
 set statusline+=%#warningmsg#
@@ -10,12 +13,56 @@ let g:syntastic_always_populate_loc_list = 1
 let g:syntastic_auto_loc_list = 1
 let g:syntastic_check_on_open = 1
 let g:syntastic_check_on_wq = 0
+
+
 let g:syntastic_python_checkers=['pep8', 'python']
 let g:syntastic_python_checker_args='--ignore=E501,E225'
 
 autocmd BufRead,BufNewFile   *.tex set spell spelllang=en_us
 
 let syntastic_mode_map = { 'passive_filetypes': ['asm'] }
+
+set nocompatible
+set bs=2
+set ruler
+set ts=2
+set sw=4
+set spell
+set spl=en
+syntax on
+set wrap
+set ai
+
+" Omni plugin syntax
+"
+filetype plugin on
+set omnifunc=syntaxcomplete#Complete
+
+
+autocmd BufNewfile,BufRead Makefile set noexpandtab
+autocmd BufNewfile,BufRead *.c  set expandtab
+autocmd BufNewfile,BufRead *.cpp set expandtab
+autocmd BufNewfile,BufRead *.py  set expandtab
+autocmd BufNewfile,BufRead *.py set tabstop=2
+autocmd BufNewfile,BufRead *.py set nospell
+
+autocmd BufNewfile,BufRead *.js  set expandtab
+autocmd BufNewfile,BufRead *.js set tabstop=2
+autocmd BufNewfile,BufRead *.js set nospell
+
+autocmd BufNewfile,BufRead *.html  set expandtab
+autocmd BufNewfile,BufRead *.html set tabstop=2
+autocmd BufNewfile,BufRead *.html set nospell
+
+autocmd BufNewfile,BufRead *.asm  set expandtab
+autocmd BufNewfile,BufRead *.asm  set expandtab
+autocmd BufNewfile,BufRead *.asm set nospell
+autocmd BufNewfile,BufRead *.asm set syn=nasm
+autocmd BufNewfile,BufRead *.asm set tabstop=3
+set fileformats=unix
+
+set list
+set listchars=nbsp:¬,tab:>-,extends:»,precedes:«,trail:•
 
 set laststatus=2
 let g:airline_powerline_fonts = 1 
