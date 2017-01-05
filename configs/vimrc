@@ -8,15 +8,20 @@ set statusline+=%{SyntasticStatuslineFlag()}
 set statusline+=%*
 set wildmenu
 
+hi Search cterm=NONE ctermfg=grey ctermbg=blue
+set hlsearch
+
+
+let g:syntastic_python_checkers=['pyflakes','pep8' ]
+let g:syntastic_python_pyflakes_args='--ignore=E501,E225'
+let g:syntastic_python_pep8_args='--ignore=E501,E225'
+
+
 let g:syntastic_aggregate_errors = 1
-let g:syntastic_always_populate_loc_list = 1
+let g:syntastic_always_populate_loc_list = 0
 let g:syntastic_auto_loc_list = 1
 let g:syntastic_check_on_open = 1
 let g:syntastic_check_on_wq = 0
-
-
-let g:syntastic_python_checkers=['pep8', 'python']
-let g:syntastic_python_checker_args='--ignore=E501,E225'
 
 autocmd BufRead,BufNewFile   *.tex set spell spelllang=en_us
 
@@ -35,8 +40,8 @@ set ai
 
 " Omni plugin syntax
 "
-filetype plugin on
-set omnifunc=syntaxcomplete#Complete
+"$"$filetype plugin on
+"$ set omnifunc=syntaxcomplete#Complete
 
 
 autocmd BufNewfile,BufRead Makefile set noexpandtab
