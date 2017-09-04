@@ -1,5 +1,6 @@
 #!/usr/bin/python
 # Copyright (C) 2010 Michael Ligh
+# Update for my usage (c) Thanatos 2016-
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -18,12 +19,13 @@
 # 1) Tested on Linux (Ubuntu), Windows XP/7, and Mac OS X
 # 2) The only requirement is pefile, other modules just add extra info
 # 3) There are various versions of python-magic and pyssdeep - we try to support both
-#--------------------------------------------------------------------
+
 import hashlib
 import time
 import binascii
 import string
-import os, sys
+import os
+import sys
 import commands
 
 try:
@@ -37,17 +39,17 @@ try:
     import magic
 except ImportError:
     print 'python-magic is not installed, file types will not be available'
-    
+
 try:
     import yara
 except ImportError:
     print 'yara-python is not installed, see http://code.google.com/p/yara-project/'
 
-# suspicious APIs to alert on 
+# suspicious APIs to alert on
 alerts = ['OpenProcess', 'VirtualAllocEx', 'WriteProcessMemory', 'CreateRemoteThread', 'ReadProcessMemory',
           'CreateProcess', 'WinExec', 'ShellExecute', 'HttpSendRequest', 'InternetReadFile', 'InternetConnect',
           'CreateService', 'StartService']
-          
+
 # legit entry point sections
 good_ep_sections = ['.text', '.code', 'CODE', 'INIT', 'PAGE']
 
@@ -288,6 +290,7 @@ class PEScanner:
             out.append("Type:    %s" % get_filetype(data)) 
             out.append("MD5:     %s"  % hashlib.md5(data).hexdigest())
             out.append("SHA1:    %s" % hashlib.sha1(data).hexdigest())
+            out.append("SHA256:  %s" % hashlib.sha256(data).hexdigest())
             out.append("ssdeep:  %s" % get_ssdeep(file))
             out.append("Date:    %s" % self.get_timestamp(pe))
             
