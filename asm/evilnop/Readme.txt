@@ -1,4 +1,6 @@
 Quick and dirty test of multibytes nop
+ref : https://github.com/intelxed/xed/blob/master/datafiles/xed-nops.txt
+
 
 All nop are working on a x86 
 All nop are well decoded on a old IDA6
