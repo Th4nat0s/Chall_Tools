@@ -12,7 +12,8 @@ binpatch.py : Patch a file, allow regex matches.<br>
 
 <b>C</b><br>
 cprint : Column print a file (only ascii printable)<br>
-crpytoracle: Find crypto constantes in a file
+crpytoracle: Find crypto constantes in a file<br>
+cyril_string: Regex for Finding cyrilc strings
 
 <b>D</b><br>
 dcod_zeustr.py: Decode strings in Zeus <br>
