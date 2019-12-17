@@ -44,6 +44,7 @@ ollylink.py: IDAPython script for linking API Function call to memory offset
 <b>P</b><br>
 peentro.py: find anomalies by name or entropy in sections of a PE file.<br>
 phpeval.py: Deobfuscate php code like eval(gzinflate(base64(backdoorcode)))
+prettyvba.py: Pretty indentation with colorization and detection of "bad" things in VB scripts
 
 <b>R</b><br>
 ripurl.py : Find and retrieve any URL found in a file even a binary one<br>
