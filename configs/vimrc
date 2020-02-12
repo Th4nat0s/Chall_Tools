@@ -1,7 +1,6 @@
 "# To install airlines with pathogen
 "# git clone https://github.com/vim-airline/vim-airline ~/.vim/bundle/vim-airline
 
-
 set termencoding=utf-8
 set encoding=utf-8
 setglobal fileencoding=utf-8
@@ -17,12 +16,8 @@ set wildmenu
 hi Search cterm=NONE ctermfg=grey ctermbg=blue
 set hlsearch
 
-"«$#set list
-"#set listchars=nbsp:¬,tab:>-,extends:»,precedes
-
 set list
-set listchars=tab:>.,trail:.,extends:#,nbsp:¬
-
+set listchars=tab:➸>,trail:➠,extends:↚,nbsp:¬
 
 let g:syntastic_python_checkers=['pyflakes','pep8' ]
 let g:syntastic_python_pyflakes_args='--ignore=E501,E225'
@@ -39,6 +34,7 @@ autocmd BufRead,BufNewFile   *.tex set spell spelllang=en_us
 
 let syntastic_mode_map = { 'passive_filetypes': ['asm'] }
 
+colorscheme darkblue
 set nocompatible
 set bs=2
 set ruler
@@ -58,10 +54,12 @@ set ai
 
 autocmd BufNewfile,BufRead Makefile set noexpandtab
 autocmd BufNewfile,BufRead *.c  set expandtab
+autocmd BufNewfile,BufRead *.cs  set expandtab
 autocmd BufNewfile,BufRead *.cpp set expandtab
 autocmd BufNewfile,BufRead *.py  set expandtab
 autocmd BufNewfile,BufRead *.py set tabstop=4
 autocmd BufNewfile,BufRead *.py set nospell
+autocmd BufNewfile,BufRead *.py set colorcolumn=80
 
 autocmd BufNewfile,BufRead *.js  set expandtab
 autocmd BufNewfile,BufRead *.js set tabstop=2
