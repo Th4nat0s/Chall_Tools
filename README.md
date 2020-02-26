@@ -26,6 +26,7 @@ entro.py: Give a file entropy and detect xor key len<br>
 f5discovery.py: Detect F5 SLB and give backend IP and port if sticked<br> 
 filetyperipper.py: Detect all filetype contained in a binary<br>
 findword.py: find word for scrable<br>
+findas.sh: give an AS and return ranges
 
 <b>H</b><br>
 har2curlloader.py: Convert browser HAR file to Curl-Loader configuration <br>
