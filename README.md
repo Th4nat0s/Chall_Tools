@@ -43,8 +43,9 @@ newpy.py: Spawn a new python script skeletton
 ollylink.py: IDAPython script for linking API Function call to memory offset
 
 <b>P</b><br>
+parse_msf.py: Parse Metasploit history file to give actions, compromised hosts
 peentro.py: find anomalies by name or entropy in sections of a PE file.<br>
-phpeval.py: Deobfuscate php code like eval(gzinflate(base64(backdoorcode)))
+phpeval.py: Deobfuscate php code like eval(gzinflate(base64(backdoorcode))
 prettyvba.py: Pretty indentation with colorization and detection of "bad" things in VB scripts
 
 <b>R</b><br>
