@@ -1,0 +1,8 @@
+# Machine-generated file - use setup menu in minicom to change parameters.
+# Minicom config file
+# a mettre dans le home en .minirc.dfl
+# mettre /dev/ttyUSB0 dans le groupe dialout
+pu port             /dev/ttyUSB0
+pu minit            
+pu rtscts           No
+pu localecho        No 
