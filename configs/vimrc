@@ -6,7 +6,7 @@ set encoding=utf-8
 setglobal fileencoding=utf-8
 "set fileencodings=ucs-bom,utf-8,latin1
 
-set expandtab ts=4 sw=4 ai
+set expandtab ts=4 sw=4 ai 
 execute pathogen#infect()
 set statusline+=%#warningmsg#
 set statusline+=%{SyntasticStatuslineFlag()}
@@ -20,15 +20,17 @@ set list
 set listchars=tab:➸>,trail:➠,extends:↚,nbsp:¬
 
 let g:syntastic_python_checkers=['pyflakes','pep8' ]
-let g:syntastic_python_pyflakes_args='--ignore=E501,E225'
-let g:syntastic_python_pep8_args='--ignore=E501,E225'
-
+let g:syntastic_python_pyflakes_args='--ignore=E501,E225,W503'
+let g:syntastic_python_pep8_args='--ignore=E501,E225,W503'
 
 let g:syntastic_aggregate_errors = 1
 let g:syntastic_always_populate_loc_list = 0
 let g:syntastic_auto_loc_list = 1
 let g:syntastic_check_on_open = 1
 let g:syntastic_check_on_wq = 0
+
+"# Shut the No Such import issues
+let g:syntastic_cpp_gcc_quiet_messages = { 'regex': ['No such'] }
 
 autocmd BufRead,BufNewFile   *.tex set spell spelllang=en_us
 
@@ -51,15 +53,12 @@ set ai
 "$"$filetype plugin on
 "$ set omnifunc=syntaxcomplete#Complete
 
-
 autocmd BufNewfile,BufRead Makefile set noexpandtab
 autocmd BufNewfile,BufRead *.c  set expandtab
 autocmd BufNewfile,BufRead *.cs  set expandtab
-autocmd BufNewfile,BufRead *.cpp set expandtab
-autocmd BufNewfile,BufRead *.py  set expandtab
-autocmd BufNewfile,BufRead *.py set tabstop=4
-autocmd BufNewfile,BufRead *.py set nospell
-autocmd BufNewfile,BufRead *.py set colorcolumn=80
+autocmd BufNewfile,BufRead *.cpp set expandtab nospell
+autocmd BufNewfile,BufRead *.py  set tabstop=2 shiftwidth=2 expandtab tabstop=4 nospell
+autocmd BufNewfile,BufRead *.py set colorcolumn=100
 
 autocmd BufNewfile,BufRead *.js  set expandtab
 autocmd BufNewfile,BufRead *.js set tabstop=2
@@ -91,3 +90,4 @@ let g:airline_symbols.branch = '⎇'
 let g:airline_symbols.paste = 'ρ'
 let g:airline_symbols.whitespace = 'Ξ'
 
+:hi SpellBad cterm=underline ctermfg=lightyellow ctermbg=red
