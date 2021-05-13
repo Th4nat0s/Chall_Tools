@@ -37,7 +37,8 @@ httpgrap.py: Grab a screenshot of a website with firefox via selenium
 machouillemacro.py: Add decoy macro for bypassing AV to vba
 
 <b>N</b><br>
-newpy.py: Spawn a new python script skeletton
+newpy.py: Spawn a new python script skeletton<br>
+ntfs_attr.sh: Show ntfs file attribute on linux<br>
 
 <b>O</b><br>
 ollylink.py: IDAPython script for linking API Function call to memory offset
