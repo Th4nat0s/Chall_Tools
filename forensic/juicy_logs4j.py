@@ -7,6 +7,7 @@ from csv import DictReader
 from struct import unpack
 from socket import AF_INET, inet_pton
 
+
 # Functions
 def getparam(count):
     """Retrieve the parameters appended """
@@ -23,7 +24,10 @@ def private(ip):
     # https://www.techtalk7.com/how-do-you-determine-if-an-ip-address-is-private-in-python/
     if ip == "0.0.0.0":
         return(True)
-    f = unpack('!I', inet_pton(AF_INET, ip))[0]
+    try:
+        f = unpack('!I', inet_pton(AF_INET, ip))[0]
+    except OSError:
+        return(True)
     private = (
         [2130706432, 4278190080],  # 127.0.0.0,   255.0.0.0   http://tools.ietf.org/html/rfc3330
         [3232235520, 4294901760],  # 192.168.0.0, 255.255.0.0 http://tools.ietf.org/html/rfc1918
@@ -42,7 +46,18 @@ def scan(line, num):
     line = re.sub('%7b', '{', line)
     line = re.sub('%7d', '}', line)
 
+    line = line.replace("${hostname}", "VAR_HOSTNAME")
     #  ${lower:l}   to l
+    if "::-" in line:
+        for letter in string.ascii_lowercase:
+            cand = "${::-" + letter + "}"
+            line = line.replace(cand, letter)
+    if "env:env_name" in line:
+        # ${env:ENV_NAME:-
+        for letter in string.ascii_lowercase:
+            cand = "${env:env_name:-" + letter + "}"
+            line = line.replace(cand, letter)
+        line = line.replace("${env:env_name:-:", ":")
     if "lower" in line:
         for letter in string.ascii_lowercase:
             cand = "${lower:" + letter + "}"
@@ -62,11 +77,10 @@ def scan(line, num):
     # extracting the IP addresses
     lst = ip.findall(line)
     lst = list(set(lst))
-    outip = [] 
+    outip = []
     for ip in lst:
         if not private(ip):
             outip.append(ip)
-
 
     # Cherche la patterne ${.*}
     pattern = r"\$\{(.+?)(\}| |,|$|\\r)"
@@ -75,7 +89,11 @@ def scan(line, num):
         if "${" in row:
             items = re.findall(pattern, row)
             for item in items:
-                print(f"line:{num}|{item}|{outip}")
+                for toto in item:
+                    toto = toto.replace("jndi", "")
+                    for word in ["dns", "ldap", "rmi"]:
+                        if word in toto:
+                            print(f"line:{num}|{toto}|{outip}")
 
 
 # Main Code #####
@@ -85,7 +103,8 @@ def main():
     num = 0
     for line in f.readlines():
         num += 1
-        scan(line,num)
+        scan(line, num)
+
 
 if __name__ == '__main__':
     main()
