@@ -3,7 +3,7 @@
 import sys
 import re
 import string
-from csv import DictReader
+from csv import DictReader, reader
 from struct import unpack
 from socket import AF_INET, inet_pton
 
@@ -17,6 +17,23 @@ def getparam(count):
         sys.exit(1)
     else:
         return sys.argv[1]
+
+
+def splits(line):
+    regex = re.compile(r"\\.|[\"',]", re.DOTALL)
+    delimiter = ''
+    compos = [-1]
+    for match in regex.finditer(line):
+        g = match.group(0)
+        if delimiter == '':
+            if g == ',':
+                compos.append(match.start())
+            elif g in "\"'":
+                delimiter = g
+        elif g == delimiter:
+            delimiter = ''
+    compos.append(len(line))
+    return [line[compos[i] + 1:compos[i + 1]] for i in range(len(compos)- 1)]
 
 
 def private(ip):
@@ -41,10 +58,17 @@ def private(ip):
 
 
 def scan(line, num):
+
+    # if b64
+    b64 = ""
+    # attrape les base64/
+    if "ase64/" in line:
+        b64 = re.findall(r'(?P<b64>ase64\/[a-zA-Z0-9+\/]{32,}={0,2})', line)
+
     # Remplace les anchors strtolower qu'on soit sur du ${
     line = re.sub('%24', '$', line.lower())
-    line = re.sub('%7b', '{', line)
-    line = re.sub('%7d', '}', line)
+    for char in [('%7b', '{'), ('%7d', '}')]:
+        line = line.replace(char[0], char[1])
 
     line = line.replace("${hostname}", "VAR_HOSTNAME")
     #  ${lower:l}   to l
@@ -67,14 +91,13 @@ def scan(line, num):
             cand = "${upper:" + letter + "}"
             line = line.replace(cand, letter)
 
-    # Split le CSV
-    csv_line = DictReader(line)
-
+    # Split le CSV, pour simplifier la vie de la regex.
+    csv_line = splits(line)
     # declaring the regex pattern for IP addresses
     ip = re.compile(r'(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})')
     # initializing the list object
     lst=[]
-    # extracting the IP addresses
+    # extracting the IP addresses sur la ligne de log
     lst = ip.findall(line)
     lst = list(set(lst))
     outip = []
@@ -85,15 +108,14 @@ def scan(line, num):
     # Cherche la patterne ${.*}
     pattern = r"\$\{(.+?)(\}| |,|$|\\r)"
     for row in csv_line:
-        row = str(row)
         if "${" in row:
             items = re.findall(pattern, row)
             for item in items:
                 for toto in item:
-                    toto = toto.replace("jndi", "")
+                    toto = toto.replace("jndi:", "")
                     for word in ["dns", "ldap", "rmi"]:
                         if word in toto:
-                            print(f"line:{num}|{toto}|{outip}")
+                            print(f"line:{num}|{toto}|{outip}|{b64}")
 
 
 # Main Code #####
