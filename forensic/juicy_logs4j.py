@@ -69,8 +69,8 @@ def scan(line, num):
 
     # Remplace les anchors strtolower qu'on soit sur du ${ et des :
     line = re.sub('%24', '$', line.lower())
-    for char in [('%7b', '{'), ('%7d', '}'), ('%3a', ':')]:
-        line = line.replace(char[0], char[1])
+    for char in [('7b', '{'), ('7d', '}'), ('3a', ':'), ('2f', '/']:
+        line = line.replace(f"%{char[0]}", char[1])
 
     line = line.replace("${hostname}", "VAR_HOSTNAME")
     #  ${lower:l}   to l
