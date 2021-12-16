@@ -63,7 +63,9 @@ def scan(line, num):
     b64 = ""
     # attrape les base64/
     if "ase64/" in line:
-        b64 = re.findall(r'(?P<b64>ase64\/[a-zA-Z0-9+\/]{32,}={0,2})', line)
+        b64c = re.search(r'(?P<nop>ase64\/)(?P<b64>[a-zA-Z0-9+\/]{32,}={0,2})', line)
+        if b64c:
+            b64 = b64c.group('b64')
 
     # Remplace les anchors strtolower qu'on soit sur du ${ et des :
     line = re.sub('%24', '$', line.lower())
