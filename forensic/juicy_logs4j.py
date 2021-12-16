@@ -65,9 +65,9 @@ def scan(line, num):
     if "ase64/" in line:
         b64 = re.findall(r'(?P<b64>ase64\/[a-zA-Z0-9+\/]{32,}={0,2})', line)
 
-    # Remplace les anchors strtolower qu'on soit sur du ${
+    # Remplace les anchors strtolower qu'on soit sur du ${ et des :
     line = re.sub('%24', '$', line.lower())
-    for char in [('%7b', '{'), ('%7d', '}')]:
+    for char in [('%7b', '{'), ('%7d', '}'), ('%3a', ':')]:
         line = line.replace(char[0], char[1])
 
     line = line.replace("${hostname}", "VAR_HOSTNAME")
