@@ -26,11 +26,13 @@ def dnsresolv(host):
     ''' Resolve a dns, implement a caching '''
     ''' return an array of ip's '''
     resolvedIP = DNS_CACHE.get('host')
+
     if not resolvedIP:
         try:
             resolvedIP = socket.gethostbyaddr(host)
         except socket.herror:
-            return(None)
+            resolvedIP = socket.gethostbyname(host)
+            resolvedIP = ('', '', [resolvedIP])
         except socket.gaierror:
             return(None)
 
