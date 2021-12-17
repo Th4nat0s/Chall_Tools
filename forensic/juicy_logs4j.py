@@ -3,23 +3,61 @@
 import sys
 import re
 import string
-from csv import DictReader, reader
+import socket
 from struct import unpack
 from socket import AF_INET, inet_pton
+
+
+DNS_CACHE = {}
 
 
 # Functions
 def getparam(count):
     """Retrieve the parameters appended """
     if len(sys.argv) != count + 1:
-        print('My command')
-        print('To Use: %s my params' % sys.argv[0])
+        print('extract log4j abuse attempt')
+        print('To Use: %s anytextlogfile' % sys.argv[0])
         sys.exit(1)
     else:
         return sys.argv[1]
 
 
+def dnsresolv(host):
+    ''' Resolve a dns, implement a caching '''
+    ''' return an array of ip's '''
+    resolvedIP = DNS_CACHE.get('host')
+    if not resolvedIP:
+        try:
+            resolvedIP = socket.gethostbyaddr(host)
+        except socket.herror:
+            return(None)
+        except socket.gaierror:
+            return(None)
+
+    if resolvedIP:
+        DNS_CACHE[host] = resolvedIP
+        outip = []
+        for ip in resolvedIP[2]:
+            outip.append(ip)
+        return(outip)
+
+
+def resolv(line):
+    ''' Extract a hostname, don't care it it's an ip in input '''
+    regex = re.compile(r"(ldap|dns|rmi):\/\/?(?P<host>[a-z\-.0-9]+)(\/|:)")
+    host = re.search(regex, line)
+    if host:
+        # Check if it's an IP
+        ip = re.compile(r'(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})')
+        isip = re.search(ip, host.group("host"))
+        if isip:
+            return(None)
+        # return an arry of IP's
+        return(dnsresolv(host.group("host")))
+
+
 def splits(line):
+    ''' Split a line on comma, respect quotes '''
     regex = re.compile(r"\\.|[\"',]", re.DOTALL)
     delimiter = ''
     compos = [-1]
@@ -37,6 +75,7 @@ def splits(line):
 
 
 def private(ip):
+    ''' return only public ip's '''
     # pepom de
     # https://www.techtalk7.com/how-do-you-determine-if-an-ip-address-is-private-in-python/
     if ip == "0.0.0.0":
@@ -57,7 +96,19 @@ def private(ip):
     return False
 
 
+def uniq_ext(ips):
+    ''' | sort | uniq an arry of ips '''
+    ''' let out only external one '''
+    outip = []
+    ips = list(set(ips))
+    for ip in ips:
+        if not private(ip):
+            outip.append(ip)
+    return(outip)
+
+
 def scan(line, num):
+    ''' main "stuff '''
 
     # if b64
     b64 = ""
@@ -98,14 +149,9 @@ def scan(line, num):
     # declaring the regex pattern for IP addresses
     ip = re.compile(r'(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})')
     # initializing the list object
-    lst=[]
+    outip=[]
     # extracting the IP addresses sur la ligne de log
-    lst = ip.findall(line)
-    lst = list(set(lst))
-    outip = []
-    for ip in lst:
-        if not private(ip):
-            outip.append(ip)
+    outip = ip.findall(line)
 
     # Cherche la patterne ${.*}
     pattern = r"\$\{(.+?)(\}| |,|$|\\r)"
@@ -117,6 +163,10 @@ def scan(line, num):
                     toto = toto.replace("jndi:", "")
                     for word in ["dns", "ldap", "rmi"]:
                         if word in toto:
+                            addip = resolv(toto)
+                            if addip:
+                                outip = outip + addip
+                            outip = uniq_ext(outip)
                             print(f"line:{num}|{toto}|{outip}|{b64}")
 
 
