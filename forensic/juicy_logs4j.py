@@ -33,7 +33,9 @@ def dnsresolv(host):
         except socket.herror:
             try:
                 resolvedIP = socket.gethostbyname(host)
-            except socket.herrro:
+            except socket.herror:
+                return(None)
+            except socket.gaierror:
                 return(None)
             resolvedIP = ('', '', [resolvedIP])
         except socket.gaierror:
