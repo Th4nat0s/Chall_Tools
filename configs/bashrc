@@ -86,9 +86,9 @@ if [ -x /usr/bin/dircolors ]; then
 fi
 
 # some more ls aliases
-alias ll='ls -l --color'
+#  alias ll='ls -l --color'
 #alias la='ls -A'
-alias l='ls -CF --color'
+# ialias l='ls -CF --color'
 
 # Alias definitions.
 # You may want to put all your additions into a separate file like
@@ -119,12 +119,14 @@ alias noproxy="source noproxy.sh"
 # export TERM=xterm-256color
 export TERM=screen-256color-bce
 
+# Get branch from git
 function parse_git_branch {
-        git branch --no-color 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/ \[\1/'
+        git branch --no-color 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/:\[\1/'
 }
 
+# Get commit hash from git
 function parse_git_log {
-        git log -1 --no-color 2> /dev/null | head -n1 | sed 's/commit //' | cut -b 1-8
+        git log -1 --no-color 2> /dev/null | head -n1 | sed 's/commit //' | cut -b 1-8  | sed 's/\(.*\)/\1]/'
 }
 
 function proml {
@@ -138,9 +140,18 @@ function proml {
   local  LIGHT_GRAY="\[\033[0;37m\]"
 # END OPTIONAL
   local     DEFAULT="\[\033[0m\]"
-PS1="[\A]:[\w]\\:\[$(tput sgr0)\]:$BLUE\$(parse_git_branch):\$(parse_git_log)\[\n\]$DEFAULT\[\$\]\]"
-PS1="\[\033[38;5;11m\][\[$(tput sgr0)\]\[\033[38;5;10m\]\@\[$(tput sgr0)\]\[\033[38;5;11m\]]\[$(tput sgr0)\]\[\033[38;5;15m\]:\[$(tput sgr0)\]\[\033[38;5;3m\]\u\[$(tput sgr0)\]\[\033[38;5;15m\]:\[$(tput sgr0)\]\[\033[38;5;7m\]\w\[$(tput sgr0)\]\[\033[38;5;15m\]:\n\\$ \[$(tput sgr0)\]"
+
+
+# Da prompt !!!
+PS1="\[\033[38;5;11m\][\[$(tput sgr0)\]\[\033[38;5;10m\]\@\[$(tput sgr0)\]\[\033[38;5;11m\]]\[$(tput sgr0)\]\[\033[38;5;15m\]:\[$(tput sgr0)\]\[\033[38;5;3m\]\u\[$(tput sgr0)\]\[\033[38;5;15m\]:\[$(tput sgr0)\]\[\033[38;5;7m\]\w\[$(tput sgr0)\]\[\033[38;5;15m\]\$(parse_git_branch):\$(parse_git_log)\n\\$ \[$(tput sgr0)\]"
 }
+
+export PYENV_ROOT="$HOME/.pyenv"
+export PATH="$PYENV_ROOT/bin:$PATH"
+if command -v pyenv 1>/dev/null 2>&1; then
+ eval "$(pyenv init --path)"
+ fi
+ eval "$(pyenv virtualenv-init -)"
 
 proml
 tmux att
