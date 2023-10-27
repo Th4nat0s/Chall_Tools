@@ -147,11 +147,28 @@ PS1="\[\033[38;5;11m\][\[$(tput sgr0)\]\[\033[38;5;10m\]\@\[$(tput sgr0)\]\[\033
 }
 
 export PYENV_ROOT="$HOME/.pyenv"
-export PATH="$PYENV_ROOT/bin:$PATH"
+export PATH="$PYENV_ROOT/bin:/home/thanat0s/code/Chall_Tools:$PATH"
 if command -v pyenv 1>/dev/null 2>&1; then
  eval "$(pyenv init --path)"
  fi
  eval "$(pyenv virtualenv-init -)"
 
+
 proml
-tmux att
+if [ -n "$TERM_PROGRAM" ] && [ "$TERM_PROGRAM" = "tmux" ]; then
+    echo "TMUX Present"
+else
+    echo "TMUX no Present"
+    ~/.ssh/rc  # fix le ssh agent formard pour le tmux
+    sessions=$(tmux list-sessions 2>/dev/null)
+    # Vérifie si des sessions existent
+    if [ -n "$sessions" ]; then
+        # Prend la première session dans la liste
+        first_session=$(echo "$sessions" | awk -F: '{print $1}' | head -n 1)
+        # Attache à la première session trouvée
+        tmux attach-session -t "$first_session"
+    else
+        # Si aucune session n'existe
+        tmux
+    fi
+fi
