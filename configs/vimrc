@@ -91,3 +91,11 @@ let g:airline_symbols.paste = 'ρ'
 let g:airline_symbols.whitespace = 'Ξ'
 
 :hi SpellBad cterm=underline ctermfg=lightyellow ctermbg=red
+
+" Activer la sauvegarde automatique de la position du curseur
+if has("autocmd")
+  augroup remember_cursor_position
+    autocmd!
+    autocmd BufReadPost * if line("'\"") > 0 && line("'\"") <= line("$") | execute "normal! g'\"" | endif
+  augroup END
+endif
