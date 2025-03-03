@@ -62,7 +62,7 @@ editor_group_undo=true
 editor_state_full_filename=true
 editor_ask_filename_before_edit=false
 nice_rotating_dash=true
-shadows=false
+shadows=true
 mcview_remember_file_position=false
 auto_fill_mkdir_name=true
 copymove_persistent_attr=true
@@ -83,13 +83,13 @@ editor_backup_extension=~
 editor_filesize_threshold=64M
 editor_stop_format_chars=-+*\\,.;:&>
 mcview_eof=
-skin=nicedark
+skin=dark
 
 [Layout]
 output_lines=0
-left_panel_size=84
-top_panel_size=21
-message_visible=false
+left_panel_size=104
+top_panel_size=0
+message_visible=true
 keybar_visible=true
 xterm_title=true
 command_prompt=true
@@ -138,18 +138,6 @@ permission_mode=false
 torben_fj_mode=false
 quick_search_mode=2
 select_flags=6
-
-simple_swap=false
-
-[terminal:screen-256color-bce]
-up=\\eOA
-down=\\eOB
-delete=
-pgup=\\e[5~
-kpasterisk=ç
-
-insert=\\e[3~
-pgdn=\\e[6~
 
 [Panelize]
 Find *.orig after patching=find . -name \\*.orig -print

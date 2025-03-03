@@ -146,12 +146,12 @@ function proml {
 PS1="\[\033[38;5;11m\][\[$(tput sgr0)\]\[\033[38;5;10m\]\@\[$(tput sgr0)\]\[\033[38;5;11m\]]\[$(tput sgr0)\]\[\033[38;5;15m\]:\[$(tput sgr0)\]\[\033[38;5;3m\]\u\[$(tput sgr0)\]\[\033[38;5;15m\]:\[$(tput sgr0)\]\[\033[38;5;7m\]\w\[$(tput sgr0)\]\[\033[38;5;15m\]\$(parse_git_branch):\$(parse_git_log)\n\\$ \[$(tput sgr0)\]"
 }
 
-export PYENV_ROOT="$HOME/.pyenv"
-export PATH="$PYENV_ROOT/bin:/home/thanat0s/code/Chall_Tools:$PATH"
-if command -v pyenv 1>/dev/null 2>&1; then
- eval "$(pyenv init --path)"
- fi
- eval "$(pyenv virtualenv-init -)"
+# export PYENV_ROOT="$HOME/.pyenv"
+#export PATH="$PYENV_ROOT/bin:/home/thanat0s/code/Chall_Tools:$PATH"
+#if command -v pyenv 1>/dev/null 2>&1; then
+# eval "$(pyenv init --path)"
+# fi
+# eval "$(pyenv virtualenv-init -)"
 
 
 proml
