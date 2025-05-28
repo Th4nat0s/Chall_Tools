@@ -1,55 +1,57 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
+
+# v 0.3 - Python 3 adaptation
+# Copyleft Thanat0s - http://Thanat0s.trollprod.org
+# Licence GNU GPL
+
 import sys
 
-# v 0.2
-
-# Copyleft Thanat0s
-# http://Thanat0s.trollprod.org
-#
-# Licence GNU GPL 
-
-# Extract "Correctly" PHP Code from file
-
+# --- Vérification des arguments ---
 if len(sys.argv) != 2:
-	print 'Extract PHP Code from a file'
-	print 'To Use: ' + sys.argv[0] + ' infile'
-	sys.exit()
+    print('Extract PHP code from a file')
+    print(f'To use: {sys.argv[0]} infile')
+    sys.exit(1)
 
-file = open(sys.argv[1], 'rb')
-byteArr = bytearray(file.read())
-file.close()
-fileSize = len(byteArr)
+# --- Lecture du fichier binaire ---
+with open(sys.argv[1], 'rb') as f:
+    byte_arr = bytearray(f.read())
 
-Result = ''
-PenDown = False
-Comment = False
-CommentType = ''
-for byte in range( 0, fileSize ):
-	# Ignore <? et ?> dans les strings
-	if ((byteArr[byte] == ord("'")) and (CommentType == '' or CommentType == ord("'"))): 
-		Comment = not Comment # Toggle True to False
-		if Comment == True:
-			CommentType = "'"
-		else:
-			CommentType = ''
+file_size = len(byte_arr)
 
-	# Ignore <? et ?> dans les strings
-	if ((byteArr[byte] == ord('"')) and (CommentType == '' or CommentType == ord('"'))): 
-		Comment = not Comment # Toggle True to False
-		if Comment == True:   
-			CommentType = '"'
-		else:
-			CommentType = ''
+# --- Initialisation des variables ---
+result = ''
+pen_down = False
+in_string = False
+string_char = b''
 
-	# Prend entre  <? et ?> 
-	if Comment == False:
-		if (byteArr[byte] == ord("<")) and (byteArr[byte+1] == ord("?")) :
-			PenDown = True
-		if (byteArr[byte] == ord("?")) and (byteArr[byte+1] == ord(">")) :
-			PenDown = False
-			Result = Result + chr(byteArr[byte]) + chr(byteArr[byte+1])
+i = 0
+while i < file_size:
+    byte = byte_arr[i:i+1]
 
-	if PenDown == True: 
-		Result = Result + chr(byteArr[byte])
-	
-print Result
+    # Détection de l'entrée ou sortie de chaîne (' ou ")
+    if byte in (b"'", b'"'):
+        if not in_string:
+            in_string = True
+            string_char = byte
+        elif string_char == byte:
+            in_string = False
+            string_char = b''
+
+    # Hors d'une chaîne
+    if not in_string:
+        if byte == b"<" and i + 1 < file_size and byte_arr[i+1:i+2] == b"?":
+            pen_down = True
+        elif byte == b"?" and i + 1 < file_size and byte_arr[i+1:i+2] == b">":
+            pen_down = False
+            result += "?>"
+            i += 2
+            continue
+
+    # Collecte si entre <? et ?>
+    if pen_down:
+        result += byte.decode('latin1')  # pour garder les caractères non-UTF8
+
+    i += 1
+
+# --- Affichage du résultat ---
+print(result)

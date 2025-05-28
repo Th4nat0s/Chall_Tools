@@ -1,64 +1,57 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 
-# v 0.1
+# v 0.2 - Python 3 adaptation
 
 # Copyleft Thanat0s
 # http://Thanat0s.trollprod.org
 #
 # Licence GNU GPL
 
+# Need
+# sudo apt install wfrench
+
 import re
 import sys
-import string
 import unicodedata
- 
-def removeAccentedChars(s):
-  u = unicode( s, "utf-8" )
-  return unicodedata.normalize('NFKD',u).encode('ascii','ignore')
-      
+
+def remove_accents(s):
+    return unicodedata.normalize('NFKD', s).encode('ascii', 'ignore').decode('ascii')
 
 if __name__ == '__main__':
-  candidates = []
+    if len(sys.argv) < 3:
+        print("Usage: script.py <letters> <length>")
+        sys.exit(1)
 
-  letters, length = sys.argv[1:]
-  length = int(length)
+    candidates = []
 
-  column = (80 - length) / length
+    letters, length = sys.argv[1], int(sys.argv[2])
+    column = (80 - length) // length  # integer division
 
+    lettercount = []
+    for char in "".join([c for i, c in enumerate(letters) if i == letters.find(c)]):
+        lettercount.append([char, letters.count(char)])
 
-  lettercount = []
+    regex = re.compile("^[" + letters + "]{" + str(length) + "}$")
 
-  for char in "".join([c for i,c in enumerate(letters) if i==letters.find(c)]):
-    lettercount.append( [char, letters.count(char)])
+    with open('/usr/share/dict/french', 'r', encoding='utf-8') as f:
+        for line in f:
+            word = remove_accents(line.strip())
+            if regex.match(word):
+                linletcount = []
+                for char in "".join([c for i, c in enumerate(word) if i == word.find(c)]):
+                    linletcount.append([char, word.count(char)])
 
-  regex = re.compile ("^["+ letters + "]{" + str(length) + "}$")
-  
-  with open('/usr/share/dict/french', 'r') as f:
-    for lines in f.readlines():
-      lines = removeAccentedChars(lines).rstrip() # Remove crlf and accents
-      if regex.match(lines):  # find candidate with the regex
-        linletcount = []   # Count the letters in the candidate.
-        for char in "".join([c for i,c in enumerate(lines) if i==lines.find(c)]):
-            linletcount.append( [char, lines.count(char)])
+                invalid = False
+                for letterC in linletcount:
+                    for letterS in lettercount:
+                        if letterS[0] == letterC[0]:
+                            if letterS[1] < letterC[1]:
+                                invalid = True
 
-        invalid = False
-        for letterC in linletcount:   # Pour Chaque source
-          for letterS in lettercount:  # Pour chaque dest 
-            if letterS[0]  == letterC[0]: # trouve la lettre...
-              if letterS[1] < letterC[1]: # y a t'il le meme nombre de letttres
-                invalid = True
- 
-        if invalid == False:
-          candidates.append (lines)
+                if not invalid:
+                    candidates.append(word)
 
-
-  i=0
-  for candidate in candidates:
-    i = i + 1 
-    print candidate,  
-    if i > column:
-      i=0
-      print "\n", 
- 
-
-
+    for i, candidate in enumerate(candidates, 1):
+        print(candidate, end=' ')
+        if i % column == 0:
+            print("\n")
