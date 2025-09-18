@@ -120,14 +120,28 @@ alias noproxy="source noproxy.sh"
 export TERM=screen-256color-bce
 
 # Get branch from git
-function parse_git_branch {
-        git branch --no-color 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/:\[\1/'
-}
+#function parse_git_branch {
+#        git branch --no-color 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/:\[\1/'
+#}
 
 # Get commit hash from git
-function parse_git_log {
-        git log -1 --no-color 2> /dev/null | head -n1 | sed 's/commit //' | cut -b 1-8  | sed 's/\(.*\)/\1]/'
+#function parse_git_log {
+#        git log -1 --no-color 2> /dev/null | head -n1 | sed 's/commit //' | cut -b 1-8  | sed 's/\(.*\)/\1]/'
+#}
+
+# Fonction pour afficher le hash du dernier commit
+parse_git_log() {
+  git log -1 --format="%h" 2>/dev/null | sed 's/.*/&\]/'
 }
+
+parse_git_branch() {
+  local branch
+  branch=$(git rev-parse --abbrev-ref HEAD 2>/dev/null)
+  if [ -n "$branch" ]; then
+    echo ":[$branch:"
+    fi
+}
+
 
 function proml {
   local        BLUE="\[\033[0;34m\]"
@@ -142,16 +156,17 @@ function proml {
   local     DEFAULT="\[\033[0m\]"
 
 
-# Da prompt !!!
-PS1="\[\033[38;5;11m\][\[$(tput sgr0)\]\[\033[38;5;10m\]\@\[$(tput sgr0)\]\[\033[38;5;11m\]]\[$(tput sgr0)\]\[\033[38;5;15m\]:\[$(tput sgr0)\]\[\033[38;5;3m\]\u\[$(tput sgr0)\]\[\033[38;5;15m\]:\[$(tput sgr0)\]\[\033[38;5;7m\]\w\[$(tput sgr0)\]\[\033[38;5;15m\]\$(parse_git_branch):\$(parse_git_log)\n\\$ \[$(tput sgr0)\]"
-}
-
 # export PYENV_ROOT="$HOME/.pyenv"
 #export PATH="$PYENV_ROOT/bin:/home/thanat0s/code/Chall_Tools:$PATH"
 #if command -v pyenv 1>/dev/null 2>&1; then
 # eval "$(pyenv init --path)"
 # fi
 # eval "$(pyenv virtualenv-init -)"
+
+
+PS1="\[\033[38;5;11m\]\[$(tput sgr0)\]\[\033[38;5;10m\][\@]\[$(tput sgr0)\]\[\033[38;5;5m\]:\u\[$(tput sgr0)\]\$(parse_git_branch)\$(parse_git_log)\[\033[38;5;11m\]\[$(tput sgr0)\]\[\033[38;5;15m\]:\[$(tput sgr0)\]\[\033[38;5;7m\]\w\[$(tput sgr0)\]\n\\$ \[$(tput sgr0)\]"
+
+}
 
 
 proml

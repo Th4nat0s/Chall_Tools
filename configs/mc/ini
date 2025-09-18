@@ -14,7 +14,7 @@ confirm_history_cleanup=true
 confirm_exit=false
 confirm_directory_hotlist_delete=false
 confirm_view_dir=false
-safe_delete=false
+safe_delete=true
 safe_overwrite=false
 use_8th_bit_as_meta=false
 mouse_move_pages_viewer=true
@@ -83,11 +83,11 @@ editor_backup_extension=~
 editor_filesize_threshold=64M
 editor_stop_format_chars=-+*\\,.;:&>
 mcview_eof=
-skin=dark
+skin=default
 
 [Layout]
 output_lines=0
-left_panel_size=104
+left_panel_size=92
 top_panel_size=0
 message_visible=true
 keybar_visible=true
@@ -115,7 +115,6 @@ clipboard_paste=
 base_color=
 xterm-256color=
 color_terminals=
-
 screen-256color-bce=
 
 [Panels]
@@ -140,7 +139,7 @@ quick_search_mode=2
 select_flags=6
 
 [Panelize]
-Find *.orig after patching=find . -name \\*.orig -print
-Find SUID and SGID programs=find . \\( \\( -perm -04000 -a -perm /011 \\) -o \\( -perm -02000 -a -perm /01 \\) \\) -print
 Find rejects after patching=find . -name \\*.rej -print
 Modified git files=git ls-files --modified
+Find SUID and SGID programs=find . \\( \\( -perm -04000 -a -perm /011 \\) -o \\( -perm -02000 -a -perm /01 \\) \\) -print
+Find *.orig after patching=find . -name \\*.orig -print
