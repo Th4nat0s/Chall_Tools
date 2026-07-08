@@ -63,7 +63,7 @@ def get_filetype(data):
             try:
                 return magic.from_buffer(data)
             except magic.MagicException:
-                magic_custom = magic.Magic(magic_file='C:\windows\system32\magic')
+                magic_custom = magic.Magic(magic_file=r'C:\windows\system32\magic')
                 return magic_custom.from_buffer(data)
     return ''
 
@@ -115,7 +115,7 @@ class peTesting:
         resources = self.check_rsrc(pe)
         ret = []
         lang_holder = []
-        for rsrc in resources.keys():
+        for rsrc in list(resources.keys()):
             (name, rva, size, type, lang, sublang) = resources[rsrc]
             ret = lang +', ' + sublang
         return ret
@@ -127,7 +127,7 @@ class peTesting:
         strRegexp = '[%s]{%d,}' % (recognizedChars, stringLength)
         searchPattern = re.compile(strRegexp)
         with open(str(files).strip("[]'"), "r") as file:
-            print(get_filetype(file))
+            print((get_filetype(file)))
             result = ""
             stringList = re.split(str(file), not string.printable)
             # stringList = searchPattern.search(file)
@@ -340,7 +340,7 @@ class peTesting:
                     c += 1
 
             out.append("")
-            print('\n'.join(out))
+            print(('\n'.join(out)))
             count += 1
 
             # out.append("EXIF Data:\n %s" % self.get_exif())
@@ -351,7 +351,7 @@ class peTesting:
 if __name__ == "__main__":
 
     if len(sys.argv) != 2:
-        print("Usage: %s <file|directory>\n" % (sys.argv[0]))
+        print(("Usage: %s <file|directory>\n" % (sys.argv[0])))
         sys.exit()
 
     object = sys.argv[1]

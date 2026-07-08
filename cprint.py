@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 import sys
 
 # v 0.1
@@ -10,8 +10,8 @@ import sys
 
 
 if len(sys.argv) != 3:
-	print 'To Use: cprint.py (path/filename) collenght'
-	print '  ex : cprint.py myfile 15'
+	print('To Use: cprint.py (path/filename) collenght')
+	print('  ex : cprint.py myfile 15')
 	sys.exit()
 
 file = open(sys.argv[1], 'rb')
@@ -36,6 +36,6 @@ for byte in range( 0, fileSize   ):
 		index = index + 1
 		if index == keylen:
 			index = 0
-			print result
+			print(result)
 			resultp = keylen
 			result = ""	

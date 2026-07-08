@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # coding=utf-8   
 import re, sys, random, string
 
@@ -11,8 +11,8 @@ import re, sys, random, string
 # Functions
 def getparam(count):
   if len(sys.argv) != count+1:
-    print 'Machouille Macro'
-    print 'Obfuscate VBA macro .. To Use: '+ sys.argv[0]+  ' filename'
+    print('Machouille Macro')
+    print('Obfuscate VBA macro .. To Use: '+ sys.argv[0]+  ' filename')
     sys.exit(1)
   else:
     return sys.argv[1]
@@ -35,13 +35,13 @@ def main():
   mfile = getparam(1)
   f = open(mfile, 'rb')
   for line in f.readlines():
-    print line
+    print(line)
     if line.upper().startswith("SUB"):
       PENDOWN = True
     if line.upper().startswith("END SUB"):
       PENDOWN = False
     if PENDOWN:
-      print decoy()
+      print(decoy())
 
 
 

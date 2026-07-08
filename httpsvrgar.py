@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 
 # v 0.1
 
@@ -19,14 +19,14 @@ if __name__ == '__main__':
   PORT = 50007              # Arbitrary non-privileged port
 
   if len(sys.argv) < 2:
-    print 'Serve a file.. This file should have headers and body'
-    print 'Examples:'
-    print ' - serve itself ' + sys.argv[0] + './' + sys.argv[0] 
+    print('Serve a file.. This file should have headers and body')
+    print('Examples:')
+    print(' - serve itself ' + sys.argv[0] + './' + sys.argv[0]) 
     sys.exit()
 
 
   fromfile  = sys.argv[1]
-  print ( 'I will serve %s on port %d' ) % (fromfile,PORT )
+  print(( 'I will serve %s on port %d' ) % (fromfile,PORT ))
 
   with open(fromfile, 'rb') as f:
     filearray = f.readlines()
@@ -50,17 +50,17 @@ if __name__ == '__main__':
     break
 
   if s is None:
-    print 'could not open socket'
+    print('could not open socket')
     sys.exit(1)
   conn, addr = s.accept()
-  print 'Connected by', addr
+  print('Connected by', addr)
   while 1:
     data = conn.recv(1024)
     if not data: 
       break
     else:
       if re.match('^GET ', data):
-        print ('Received %s' ) % (data)
+        print(('Received %s' ) % (data))
         for lines in filearray:
           conn.send(lines)
   conn.close()

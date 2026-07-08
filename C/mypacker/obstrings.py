@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 # Obfuscate strings in strings
 
 import random
@@ -55,15 +55,15 @@ for line in solution:
   i=i+1
   tstring=strings[line[0]-1].replace("\"","\\\"")
   #tstring=tstring.replace("%","\\%")
-  print ("bstr%d: db \"%s\", 0x00" % (i,tstring)) 
+  print(("bstr%d: db \"%s\", 0x00" % (i,tstring))) 
 
 i=0
 
 randrange = random.randrange(0xfffff)
-print ("allstroff: dd 0x%x" % randrange) 
+print(("allstroff: dd 0x%x" % randrange)) 
 for line in solution:
   i=i+1
-  print ("allstr%d: dd bstr%d  - 0x%x" % (i,i,randrange))
+  print(("allstr%d: dd bstr%d  - 0x%x" % (i,i,randrange)))
 
 # Write stings mapping 
 i=0;
@@ -71,12 +71,12 @@ for words in wtupple:
   i=i+1
   tstring=words[0].replace("\\","_")
   tstring=tstring.replace(":","_")
-  print ("str_%s: db " % tstring),
+  print(("str_%s: db " % tstring), end=' ')
   for linec,pos in words[1]:
-    print ("0x%x," % pos), 
+    print(("0x%x," % pos), end=' ') 
     for line in solution:
       if line[0] == linec:
-        print ("0x%x," % line[1])  ,
+        print(("0x%x," % line[1]), end=' ')
         break
-  print( "0x0; %s" % words[0])
-  print ("GLOBAL str_%s" % tstring) 
+  print(( "0x0; %s" % words[0]))
+  print(("GLOBAL str_%s" % tstring)) 

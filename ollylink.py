@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # coding=utf-8
 
 # Script for IDAPYTHON for importing API CAll name.
@@ -15,8 +15,8 @@ import sys
 # Functions
 def getparam(count):
     if len(sys.argv) != count + 1:
-        print 'Fit OllyDbg export into Ida references'
-        print 'To Use: %s olly_function_export.txt' % sys.argv[0]
+        print('Fit OllyDbg export into Ida references')
+        print('To Use: %s olly_function_export.txt' % sys.argv[0])
         sys.exit(1)
     else:
         return sys.argv[1]
@@ -35,7 +35,7 @@ def main():
         if candidate:
             functnum = functnum + 1
         functions['0x' + str.lower(candidate.group('offset'))] = candidate.group('function')  # Format 0xba2345678
-    print('[+] Loaded %d DLL functions' % functnum)
+    print(('[+] Loaded %d DLL functions' % functnum))
 
     functnum = 0
     ea = ScreenEA()  # EA = Offset@Mouse
@@ -47,7 +47,7 @@ def main():
         for addresse in Heads(function_ea, FindFuncEnd(function_ea)):
             for offset in DataRefsFrom(addresse):
                 ida_offset[(offset)] = offset
-    print('[+] IDA Got %d Data Ref in %d Subfunctions in Seg %x' % (len(ida_offset), functnum, SegStart(ea)))
+    print(('[+] IDA Got %d Data Ref in %d Subfunctions in Seg %x' % (len(ida_offset), functnum, SegStart(ea))))
 
     functnum = 0
     functfound = 0
@@ -58,7 +58,7 @@ def main():
             MakeName(offset, functions[hex(Dword(offset))])
     functfound = functfound + 1
     # print Name(offset),hex(offset),hex(Dword(offset)), 'found'
-    print('[+] Find %d Api call out of %d unknown ref' % (functfound, functnum))
+    print(('[+] Find %d Api call out of %d unknown ref' % (functfound, functnum)))
 
 
 if __name__ == '__main__':

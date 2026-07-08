@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 
 import pefile
 import sys, os
@@ -19,23 +19,23 @@ import sys, os
 
 # Needs two arg if not... help
 if len(sys.argv) <= 2:
-        print 'Xor a file with Byte key'
-        print 'To Use: '+ sys.argv[0]+  ' filename xorkey '
-        print '  xorkey is a strning'
+        print('Xor a file with Byte key')
+        print('To Use: '+ sys.argv[0]+  ' filename xorkey ')
+        print('  xorkey is a strning')
         sys.exit(1)
 
 FILENAME = sys.argv[1]
 
 # Test if file exists
 if not os.path.isfile(FILENAME):
-    print 'ERROR: File not found'
+    print('ERROR: File not found')
     sys.exit(1)
 
 INC = 0
 # Get xor key
 KEYS = sys.argv[2]
 
-print "data, key, inc, base, result"
+print("data, key, inc, base, result")
 LINE=0
 PK = 0
 with open(FILENAME, 'rb') as f:
@@ -48,10 +48,10 @@ with open(FILENAME, 'rb') as f:
 
         LINE =LINE+1
         if LINE < 10:
-            print (int(BCK), KEY, INC, int(filearray[I]))
+            print((int(BCK), KEY, INC, int(filearray[I])))
         if LINE == 11:
-            print "... "
+            print("... ")
 
-print ('writing output to %s.xor' % FILENAME)
+print(('writing output to %s.xor' % FILENAME))
 with open(('%s.xor' % FILENAME), 'w') as outfile:
   outfile.write(filearray)

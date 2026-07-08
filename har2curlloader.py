@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # coding=utf-8   
 import re, sys
 import json
@@ -7,8 +7,8 @@ import datetime
 # Functions
 def getparam(count):
   if len(sys.argv) != count+1:
-    print 'Convert HAR File to CURL-LOADER script'
-    print 'To Use: '+ sys.argv[0]+  ' my_full_har'
+    print('Convert HAR File to CURL-LOADER script')
+    print('To Use: '+ sys.argv[0]+  ' my_full_har')
     sys.exit(1)
   else:
     return sys.argv[1]
@@ -42,17 +42,17 @@ def main():
   current = lasttime
   for querie in queries:
     current = querie[0]
-    print ('URL="%s"' % querie[2]) 
-    print ('URL_SHORT_NAME="HIT%d"' % hit)
-    print ('REQUEST_TYPE=%s' % querie[1]) 
+    print(('URL="%s"' % querie[2])) 
+    print(('URL_SHORT_NAME="HIT%d"' % hit))
+    print(('REQUEST_TYPE=%s' % querie[1])) 
     if querie[1] == "POST":
       print ('FORM_USAGE_TYPE = "AS_IS"' )
-      print ('FORM_STRING = "%s"' % querie[3])
+      print(('FORM_STRING = "%s"' % querie[3]))
     print ('TIMER_URL_COMPLETION = 10000')
     delta = int(current) - int(lasttime)
     if delta <= 20:
       delta = 0
-    print ('TIMER_AFTER_URL_SLEEP = %s' %( delta) )
+    print(('TIMER_AFTER_URL_SLEEP = %s' %( delta) ))
     lasttime = current
     hit += 1 
     print ('')

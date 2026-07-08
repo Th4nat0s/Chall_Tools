@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # coding=utf-8
 import re
 import sys
@@ -7,8 +7,8 @@ import sys
 # Functions
 def getparam(count):
     if len(sys.argv) != count + 1:
-        print 'My command'
-        print 'To Use: ' + sys.argv[0] + ' my params'
+        print('My command')
+        print('To Use: ' + sys.argv[0] + ' my params')
         sys.exit(1)
     else:
         return sys.argv[1]
@@ -59,7 +59,7 @@ def nocomments(txtarr):
 
 def chrprint(val):
     val = int("%s" % val.group(1))
-    if val in xrange(32, 127):
+    if val in range(32, 127):
         return "\"" + chr(val) + "\""
     else:
         return "Chr$(" + ("%d" % val) + ")"
@@ -82,7 +82,7 @@ def nochr(txtarr):
 def nowrap(txtarr):
     output = []
     line = ""
-    for i in xrange(0, len(txtarr)):
+    for i in range(0, len(txtarr)):
         if re.findall(r'_$', txtarr[i]):
             line = line + " " + re.sub(r'_$', '', txtarr[i]).strip(' ')
         else:
@@ -251,7 +251,7 @@ def main():
     txt = open(filename)
     txt = txt.read()  # Now contains UTF strings
     txt = beautify_txt(txt)
-    print txt
+    print(txt)
 
 if __name__ == '__main__':
     main()

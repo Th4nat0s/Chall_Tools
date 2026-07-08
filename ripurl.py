@@ -1,17 +1,17 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 import sys
 import re
 import hashlib
-import urllib
+import urllib.request, urllib.parse, urllib.error
 import time
 import os
 
 if __name__ == '__main__':
 
   if len(sys.argv) < 2:
-    print 'Find uri and download'
-    print 'Examples:'
-    print '   ripurl myfile.php' 
+    print('Find uri and download')
+    print('Examples:')
+    print('   ripurl myfile.php') 
     sys.exit()
 
 URLRGX = r"(?:['\" ])(http[s]?:\/\/.*?)(?:[ '\"])"
@@ -34,7 +34,7 @@ LOG.append ('Url Rip of %s - %s \n' % (sys.argv[1],time.strftime("%d/%m/%Y")))
 CANDIDATE = []
 FOUND = re.findall(URLRGX,string,re.IGNORECASE)
 for URL in FOUND:
-  if (URL.lower()<>"https://" and URL.lower()<>"http://"):
+  if (URL.lower()!="https://" and URL.lower()!="http://"):
     CANDIDATE.append( URL)
 
 RIPNAME = './RIPLOG-'+sys.argv[1]
@@ -45,14 +45,14 @@ ID=0
 for URI in CANDIDATE:
   MD5 =  hashlib.md5(URI).hexdigest()
   STATUS = ("%d: %s %s" % (ID,MD5,URI))
-  print STATUS,
+  print(STATUS, end=' ')
   sys.stdout.flush()
   try:
-    urllib.urlretrieve (URI,RIPNAME+"/"+"RIP-"+MD5)
-    print "Ok"
+    urllib.request.urlretrieve (URI,RIPNAME+"/"+"RIP-"+MD5)
+    print("Ok")
     STATUS = STATUS + " Ok"
   except:
-    print "Failed"
+    print("Failed")
     STATUS = STATUS + " Failed"
   finally:
     LOG.append(STATUS)

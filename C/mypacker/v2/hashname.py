@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 import random
 
 STRINGS = [ 'ntdll.dll', 'kernel32.dll', 'VirtualAlloc',"NtResumeThread","WriteProcessMemory","GetThreadContext",
@@ -6,7 +6,7 @@ STRINGS = [ 'ntdll.dll', 'kernel32.dll', 'VirtualAlloc',"NtResumeThread","WriteP
             "VirtualAllocEx","ReadProcessMemory","LoadLibrary","ResumeThread"]
 
 def ROR(x, n,bits=32):
-    mask = (2L**n) - 1
+    mask = (2**n) - 1
     mask_bits = x & mask
     return (x >> n) | (mask_bits << (32 - n))
 
@@ -23,7 +23,7 @@ for ITEMS in STRINGS:
     code = ROL(code , HASH_SFT)
   include = include +  ('HASH_%s equ 0x%X\n' % (ITEMS.upper(),code))  
 
-print "* Hashing strings"
-print include
+print("* Hashing strings")
+print(include)
 with open('hashs.inc', 'w') as f:
   f.write(include)

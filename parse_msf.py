@@ -9,7 +9,7 @@ def getparam(count):
     """Retrieve the parameters appended """
     if len(sys.argv) != count + 1:
         print('Parse MSF History')
-        print('To Use: %s mymsffile' % sys.argv[0])
+        print(('To Use: %s mymsffile' % sys.argv[0]))
         sys.exit(1)
     else:
         return sys.argv[1]

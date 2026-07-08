@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 import random
 import sys
 import struct
@@ -14,22 +14,22 @@ import struct
 if __name__ == '__main__':
   # Charge le payload
   try:
-    print ('* Loading payload: %s' % sys.argv[1])
-    f = open(sys.argv[1],'r')
+    print(('* Loading payload: %s' % sys.argv[1]))
+    f = open(sys.argv[1], 'rb')
     payload = bytearray(f.read())
     f.close()
     payload_len = len(payload)
-    print ('* Payload len: %d bytes' % (payload_len))
+    print(('* Payload len: %d bytes' % (payload_len)))
   except:
     print('** Error opening file')
     exit(1)
   
   # Clean UP DOS Stub
   S = struct.Struct('<H')
-  idxdospay = S.unpack_from(buffer(bytearray(payload[0x18:0x18+2])))[0] 
+  idxdospay = S.unpack_from(payload[0x18:0x18+2])[0]
   S = struct.Struct('<I')
-  lendospay = (  S.unpack_from(buffer(bytearray(payload[0x3c:0x3c+4])))[0] - idxdospay)  
-  print ('* Dos Code at 0x%X for 0x%X bytes' % (idxdospay,lendospay))
+  lendospay = (S.unpack_from(payload[0x3c:0x3c+4])[0] - idxdospay)
+  print(('* Dos Code at 0x%X for 0x%X bytes' % (idxdospay,lendospay)))
   dosstub=bytearray()
   IDX=0
   
@@ -56,7 +56,7 @@ if __name__ == '__main__':
   #payload = [ 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16]
   #payload_len = len (payload)
   #bboxlen = random.randrange(5)+1
-  print ('* BBox Len: %d' % bboxlen)
+  print(('* BBox Len: %d' % bboxlen))
 
 
   # Genere le BBox Array
@@ -75,16 +75,16 @@ if __name__ == '__main__':
   fullrow = payload_len // bboxlen 
   restrow = payload_len % bboxlen
   
-  print ('* Ready to Process %dx%d bytes row and %d bytes' % (fullrow,bboxlen,restrow)) 
+  print(('* Ready to Process %dx%d bytes row and %d bytes' % (fullrow,bboxlen,restrow))) 
   
   if not restrow == 0:
-    print ('* Adding %d padding bytes' % (bboxlen-restrow))
+    print(('* Adding %d padding bytes' % (bboxlen-restrow)))
     for i in range(0,bboxlen-restrow):
       payload.append(0x00)
     payload_len = payload_len + (bboxlen- restrow)
     fullrow = payload_len // bboxlen 
     restrow = payload_len % bboxlen
-    print ('* Final Process %dx%d bytes row and %d bytes' % (fullrow,bboxlen,restrow)) 
+    print(('* Final Process %dx%d bytes row and %d bytes' % (fullrow,bboxlen,restrow))) 
    
   for BBraw in range(0,fullrow):
     for I in bboxarray:
@@ -96,7 +96,7 @@ if __name__ == '__main__':
   out = bytearray(opayload)
   
 
-  with open('payload.bin',"w") as f:
+  with open('payload.bin', "wb") as f:
     f.write(out)
 
   include = ('PELEN dd 0x%X ; PE Len\n' % payload_len)
@@ -108,4 +108,3 @@ if __name__ == '__main__':
   include = include + ('RANDOM32 equ 0x%X ; Random 8 bits\n' % random.randrange(0xffffffff)) 
   with open('payload.inc', 'w') as f:
      f.write(include)
-

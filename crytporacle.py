@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 # coding=utf-8 
 
 # v 0.1
@@ -151,9 +151,9 @@ CONSTANTES = [
 if __name__ == '__main__':
 
   if len(sys.argv) < 2:
-    print 'Find cryto remarquables values in file'
-    print 'Examples:'
-    print sys.argv[0] + ' myexefile'
+    print('Find cryto remarquables values in file')
+    print('Examples:')
+    print(sys.argv[0] + ' myexefile')
     sys.exit()
 
 
@@ -163,7 +163,7 @@ if __name__ == '__main__':
     filearray = bytearray(f.read())
 
   for CONST in CONSTANTES:
-    print 'Checking ' + CONST[0],
+    print('Checking ' + CONST[0], end=' ')
     VALCOUNT = 0
     VALFOUND = 0
     for VALUES in CONST[1]:  # Test AABBCCDD
@@ -176,7 +176,7 @@ if __name__ == '__main__':
         if DWORD == VALUES:
           VALFOUND = VALFOUND + 1
           break
-    if VALFOUND <> VALCOUNT:      # We have not Found IT... byteswap
+    if VALFOUND != VALCOUNT:      # We have not Found IT... byteswap
       VALCOUNT = 0
       VALFOUND = 0
       for VALUES in CONST[1]:
@@ -193,8 +193,8 @@ if __name__ == '__main__':
             VALFOUND = VALFOUND + 1
             break
     RATE= ( VALFOUND * 100) / VALCOUNT
-    if (RATE <> 100):
-      print ' ' + str( ( VALFOUND * 100) / VALCOUNT ) + '%' 
+    if (RATE != 100):
+      print(' ' + str( ( VALFOUND * 100) / VALCOUNT ) + '%') 
     else:
-      print ' ' + str( ( VALFOUND * 100) / VALCOUNT ) + '% -- Cypher constantes Found' 
+      print(' ' + str( ( VALFOUND * 100) / VALCOUNT ) + '% -- Cypher constantes Found') 
 

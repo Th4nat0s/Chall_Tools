@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 
 import pefile
 import sys, os
@@ -26,24 +26,24 @@ def getint(thestr):
     else:
       value = int (thestr)
   except:
-    print "ERROR Key in invalid format"
+    print("ERROR Key in invalid format")
     sys.exit(1)
   return (value)
 
 
 # Needs two arg if not... help
 if len(sys.argv) <= 2:
-        print 'Xor a file with Byte key'
-        print 'To Use: '+ sys.argv[0]+  ' filename xorkey [inc|dec|number] [start]'
-        print '  xorkey could be in hex(0x41) or decimal (101)'
-        print '  if inc|dec the xor key will be (inc|dec) on each byte, it could be also a 8bit signed value'
-        print '  if [start] start the xor key increment at this value (hex or decimal)'
+        print('Xor a file with Byte key')
+        print('To Use: '+ sys.argv[0]+  ' filename xorkey [inc|dec|number] [start]')
+        print('  xorkey could be in hex(0x41) or decimal (101)')
+        print('  if inc|dec the xor key will be (inc|dec) on each byte, it could be also a 8bit signed value')
+        print('  if [start] start the xor key increment at this value (hex or decimal)')
         sys.exit(1)
 FILENAME = sys.argv[1]
 
 # Test if file exists
 if not os.path.isfile(FILENAME):
-    print 'ERROR: File not found'
+    print('ERROR: File not found')
     sys.exit(1)
 
 INC = 0
@@ -64,7 +64,7 @@ BASE = 0
 if len(sys.argv) == 4+1:
   BASE = getint(sys.argv[4]) 
 
-print "data, key, inc, base, result"
+print("data, key, inc, base, result")
 LINE=0
 with open(FILENAME, 'rb') as f:
   filearray = bytearray(f.read())
@@ -74,12 +74,12 @@ with open(FILENAME, 'rb') as f:
     #KEY = (KEY + (INC + BASE)%256 ) % 256
     LINE =LINE+1
     if LINE < 10:
-      print (int(BCK), KEY, INC, BASE, int( filearray[I]) )
+      print((int(BCK), KEY, INC, BASE, int( filearray[I]) ))
     if LINE == 11:
-      print "... "
+      print("... ")
     KEY = (KEY + INC + BASE ) % 256
     BASE = 0
 
-print ('writing output to %s.xor' % FILENAME)
+print(('writing output to %s.xor' % FILENAME))
 with open(('%s.xor' % FILENAME), 'w') as outfile:
   outfile.write(filearray)

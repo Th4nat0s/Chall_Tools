@@ -3,6 +3,9 @@ Chall_Tools
 
 Userfull tools for Security Challenges
 
+<b>2</b><br>
+2cidr : convert a one column IP file into CIDR summarized list
+
 <b>A</b><br>
 aslr : Switch on/off aslr (for lazy guys)
 

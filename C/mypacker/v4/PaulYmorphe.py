@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 import random,sys,re
 
 # v 0.1
@@ -83,8 +83,8 @@ def O_LOOP(ADDR):
 if __name__ == '__main__':
 
   if len(sys.argv) != 2:
-	  print 'PolyMorph Asm Source file'
-	  print 'To Use: ' + sys.argv[0] + ' infile'
+	  print('PolyMorph Asm Source file')
+	  print('To Use: ' + sys.argv[0] + ' infile')
 	  sys.exit()
 
   BUFFER = []
@@ -107,7 +107,7 @@ if __name__ == '__main__':
   rREG8 = "((:?[ABCD][HL])"
 
   for IDX in range(0,len(CODE)):
-    if re.match(r"(\.\S+:\s)?MOV\s+"+rREG32+",\d+", CODE[IDX], flags=re.IGNORECASE): 
+    if re.match(r"(\.\S+:\s)?MOV\s+"+rREG32+r",\d+", CODE[IDX], flags=re.IGNORECASE): 
       RGX = re.search(r"\s(.*),(.*)(:?\s|$)",CODE[IDX])
       REG = RGX.group(1)
       if not str(RGX.group(2).upper).find("X"):
@@ -116,10 +116,10 @@ if __name__ == '__main__':
     if re.match(r"xor\s+((:?e[abcd]x)|(:?E[SD]I)|EBP|ESP),\1", CODE[IDX], flags=re.IGNORECASE): 
       REG = re.search(r"\s(.*),",CODE[IDX]).group(1)
       CODE[IDX] = O_XOR(REG)  
-    if re.match(r"dec\s+"+rREG32+"(\s|$)" , CODE[IDX], flags=re.IGNORECASE):
+    if re.match(r"dec\s+"+rREG32+r"(\s|$)" , CODE[IDX], flags=re.IGNORECASE):
       REG = re.search(r"\s(.*)(\s|$)",CODE[IDX]).group(1)
       CODE[IDX] = O_DEC(REG)
-    if re.match(r"inc\s+"+rREG32+"(\s|$)" , CODE[IDX], flags=re.IGNORECASE):
+    if re.match(r"inc\s+"+rREG32+r"(\s|$)" , CODE[IDX], flags=re.IGNORECASE):
       REG = re.search(r"\s(.*)(\s|$)",CODE[IDX]).group(1)
       CODE[IDX] = O_INC(REG)
     if re.match(r"call\s" , CODE[IDX], flags=re.IGNORECASE):
@@ -128,4 +128,4 @@ if __name__ == '__main__':
     if re.match(r"loop\s+ECX" , CODE[IDX], flags=re.IGNORECASE):
       ADDR = re.search(r"\s(.*)(\s|$)",CODE[IDX]).group(1)
       CODE[IDX] = O_LOOP(ADDR)
-    print CODE[IDX] 
+    print(CODE[IDX]) 

@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 import pefile
 import sys
 import os
@@ -18,7 +18,7 @@ SECTIONS = ['.text', '.bss', '.rdata', '.data', '.edata', '.idata', '.pdata', '.
 # Needs two arg if not... help
 if len(sys.argv) != 2:
         print ('Compute the entropy of PE sections')
-        print ('To Use: '+ sys.argv[0]+ ' filename')
+        print(('To Use: '+ sys.argv[0]+ ' filename'))
         sys.exit(1)
 FILENAME = sys.argv[1]
 
@@ -31,7 +31,7 @@ if not os.path.isfile(FILENAME):
 try:
     PE = pefile.PE(FILENAME, fast_load=True)
 except:
-    print ("Error in loading " + FILENAME)
+    print(("Error in loading " + FILENAME))
 
 print ("Section\t\tEntropy\tSize\tMD5\t\t\t\t\tRemark")
 for section in PE.sections:
@@ -46,4 +46,4 @@ for section in PE.sections:
         REMARKS.append("Unusal Segment")
     if ENTROPY > 7:
         REMARKS.append("High Entropy")
-    print ("%s%s\t%.3f\t%s\t%s\t%s" % (SECTION_NAME, ' ' * (8 - len(SECTION_NAME)), ENTROPY, section.SizeOfRawData, section.get_hash_md5(), ','.join(REMARKS)))
+    print(("%s%s\t%.3f\t%s\t%s\t%s" % (SECTION_NAME, ' ' * (8 - len(SECTION_NAME)), ENTROPY, section.SizeOfRawData, section.get_hash_md5(), ','.join(REMARKS))))

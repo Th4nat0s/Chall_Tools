@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # coding=utf-8
 import re
 import sys
@@ -8,8 +8,8 @@ import string
 # Functions
 def getparam(count):
     if len(sys.argv) != count + 1:
-        print 'Convert a static string to static regex case insensitive for bulk_extractor option -F'
-        print 'To Use: ' + sys.argv[0] + ' infile outfile'
+        print('Convert a static string to static regex case insensitive for bulk_extractor option -F')
+        print('To Use: ' + sys.argv[0] + ' infile outfile')
         sys.exit(1)
     else:
         return sys.argv[1], sys.argv[2]

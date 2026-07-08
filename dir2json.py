@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # coding=utf-8
 import re
 import sys
@@ -13,7 +13,7 @@ For the "pooooor" responders... :)
  Volume in drive C has no label.
  Volume Serial Number is C4C3-B82E
 
- Directory of C:\Users\john
+ Directory of C:\\Users\\john
 
 07/04/2016  11:32    <DIR>          .
 07/04/2016  11:32    <DIR>          ..
@@ -47,8 +47,8 @@ Chercher un .js avec pdf dedans
 # Functions
 def getparam(count):
     if len(sys.argv) != count + 1:
-        print 'Find someting in user listing'
-        print 'To Use: ' + sys.argv[0] + ' mydiroutput'
+        print('Find someting in user listing')
+        print('To Use: ' + sys.argv[0] + ' mydiroutput')
         sys.exit(1)
     else:
         return sys.argv[1]
@@ -95,7 +95,7 @@ def main():
                                       'date': sline.group('date'), 'time': sline.group('time'),
                                       'type': 'link', 'link': sline.group('link')})
 
-    print (json.dumps(files))
+    print((json.dumps(files)))
 
 if __name__ == '__main__':
     main()

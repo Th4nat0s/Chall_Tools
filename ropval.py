@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 
 # v 0.1
 
@@ -20,9 +20,9 @@ def find_first(number):
 
 
 if len(sys.argv) < 2:
-	print'  Will find all static numeric values'
-	print 'very usefull for a rop add eax,[ebx-xxxxxx]'
-	print ' ex : ropval.py mybinary 0xb8a0008 | sort -n'
+	print('  Will find all static numeric values')
+	print('very usefull for a rop add eax,[ebx-xxxxxx]')
+	print(' ex : ropval.py mybinary 0xb8a0008 | sort -n')
 	sys.exit()
 
 file = open(sys.argv[1], 'rb')
@@ -31,9 +31,9 @@ byteArr = bytearray(file.read())
 file.close()
 filesize = len(byteArr)
 
-print "- Loaded " + str(filesize) + " Bytes"
+print("- Loaded " + str(filesize) + " Bytes")
 sys.stdout.flush()
-print "- Elfread "
+print("- Elfread ")
 sys.stdout.flush()
 
 if len(sys.argv) >= 3:
@@ -55,7 +55,7 @@ for line in cmd.stdout:
 			# Stock  OFFSET, LEN, MAPPING
 			elf.append([int(regex.group(2),16),int(regex.group(3),16),int(regex.group(1),16)])
 
-print "- Finding values"
+print("- Finding values")
 sys.stdout.flush()
 result= []
 
@@ -76,48 +76,48 @@ for section in elf:
 result.sort()
 
 if len(sys.argv) == 5:
-	print "Find a way from "+ sys.argv[3] + " to " + sys.argv[4],
+	print("Find a way from "+ sys.argv[3] + " to " + sys.argv[4], end=' ')
 	SRC = int(sys.argv[3],16)
 	DST = int(sys.argv[4],16)
 	if DST > SRC:
 		GAP = DST-SRC
 	else:
 		GAP = 0xFFFFFFFF - SRC + DST + 1
-	print "Gap is " + hex(GAP)
+	print("Gap is " + hex(GAP))
 	result.reverse()
 	SOLUTION= []
-	print "solution :"+ str(GAP)+" sub(",
-	while GAP <> 0:
+	print("solution :"+ str(GAP)+" sub(", end=' ')
+	while GAP != 0:
 		# hopefully 1 is alway present
 		CANDIDATE = find_first(GAP)
 		SOLUTION.append (CANDIDATE)
 		GAP = GAP - CANDIDATE[0]
 	for items in SOLUTION:
-		print str(items[0]),
-	print ")"
-	print "memory location :",
+		print(str(items[0]), end=' ')
+	print(")")
+	print("memory location :", end=' ')
 	for items in SOLUTION:
-		print '%08X' % int(items[1]) + ",",
-	print ""
-	print "memory offset (" + str(offset) + ") :",
+		print('%08X' % int(items[1]) + ",", end=' ')
+	print("")
+	print("memory offset (" + str(offset) + ") :", end=' ')
 	for items in SOLUTION:	
-		print '"%08X"' % int(int(items[1]+offset) % 0xffffffff) + "," ,
-	print ""
+		print('"%08X"' % int(int(items[1]+offset) % 0xffffffff) + ",", end=' ')
+	print("")
 
 else:
-	print "Decval","Hexval","mOffset",
-	if offset<>0:
-		print "sOffest"
+	print("Decval","Hexval","mOffset", end=' ')
+	if offset!=0:
+		print("sOffest")
 	else:
-		print ""
+		print("")
 
 	for items in result:
-		print str(items[0]),
-		print '%08X' % items[0] ,
-		print '%08X' % int(items[1]),
-		if offset<>0:
-			print '%08X' % int(int(items[1]+offset) % 0xffffffff),
-		print ""
+		print(str(items[0]), end=' ')
+		print('%08X' % items[0], end=' ')
+		print('%08X' % int(items[1]), end=' ')
+		if offset!=0:
+			print('%08X' % int(int(items[1]+offset) % 0xffffffff), end=' ')
+		print("")
 
 
 

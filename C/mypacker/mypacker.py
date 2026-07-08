@@ -1,16 +1,16 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 import random
 import sys
 
 if __name__ == '__main__':
   # Charge le payload
   try:
-    print ('Loading payload: %s' % sys.argv[1])
+    print(('Loading payload: %s' % sys.argv[1]))
     f = open(sys.argv[1],'r')
     payload = bytearray(f.read())
     f.close()
     payload_len = len(payload)
-    print ('Payload len: %d bytes' % (payload_len))
+    print(('Payload len: %d bytes' % (payload_len)))
   except:
     print('Error opening file')
     exit(1)
@@ -24,7 +24,7 @@ if __name__ == '__main__':
   asciikey=''
   for i in key:
     asciikey = asciikey + str(hex(i)).partition('x')[2]
-  print ('Xor key: %s' % (asciikey))
+  print(('Xor key: %s' % (asciikey)))
 
    
   # Xor le payload

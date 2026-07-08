@@ -1,12 +1,12 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 
 import sys
-import commands
+import subprocess
 
 try:
   import magic
 except ImportError:
-  print 'python-magic is not installed, file types will not be available'
+  print('python-magic is not installed, file types will not be available')
   sys.exit(1)  
 
 
@@ -22,8 +22,8 @@ except ImportError:
 
 # Needs two arg if not... help
 if len(sys.argv) != 2:
-        print 'Harvest and extract'
-        print 'To Use: '+ sys.argv[0]+  ' filename'
+        print('Harvest and extract')
+        print('To Use: '+ sys.argv[0]+  ' filename')
         sys.exit(1)
 FILE = sys.argv[1]
 
@@ -32,7 +32,7 @@ FILEARRAY = bytearray(file.read())
 file.close()
 FILESIZE = len(FILEARRAY)
 
-print "loaded %s" % ( FILESIZE ) 
+print("loaded %s" % ( FILESIZE )) 
 
 
 # Min 64 Bytes
@@ -45,7 +45,7 @@ while I > 64:
  ## open('temp.dat','wb').write(FILEARRAY[I:BOUND])
  ## STATUS, FILERESULT = commands.getstatusoutput ("file -b temp.dat" )
   if not FILERESULT == 'data':
-    print ('%.8X %s') % (I ,FILERESULT )
+    print(('%.8X %s') % (I ,FILERESULT ))
     sys.stdout.flush()
     # If Found a file, set a new Bound (But always at least 16k)
     BOUND = I + 16000
