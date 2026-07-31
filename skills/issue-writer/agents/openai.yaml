@@ -1,0 +1,4 @@
+interface:
+  display_name: "Issue Writer"
+  short_description: "Draft and create repo-aware GitHub/Forjeo issues"
+  default_prompt: "Use $issue-writer to turn this problem into a repository-aware GitHub/Forjeo issue."
